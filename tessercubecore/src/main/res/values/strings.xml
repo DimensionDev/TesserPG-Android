@@ -1,0 +1,137 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" translatable="false">Tessercube</string>
+    <string name="pgp_public_key_start" translatable="false">-----BEGIN PGP PUBLIC KEY BLOCK-----</string>
+    <string name="pgp_private_key_start" translatable="false">-----BEGIN PGP PRIVATE KEY BLOCK-----</string>
+    <string name="pgp_signed_message_start" translatable="false">-----BEGIN PGP SIGNED MESSAGE-----</string>
+    <string name="pgp_message_start" translatable="false">-----BEGIN PGP MESSAGE-----</string>
+
+
+    <string name="pgp_public_key_end" translatable="false">-----END PGP PUBLIC KEY BLOCK-----</string>
+    <string name="pgp_private_key_end" translatable="false">-----END PGP PRIVATE KEY BLOCK-----</string>
+    <string name="pgp_signed_message_end" translatable="false">-----END PGP SIGNATURE-----</string>
+    <string name="pgp_message_end" translatable="false">-----END PGP MESSAGE-----</string>
+
+    <string name="contact_detail_fingerprint">fingerprint</string>
+    <string name="contact_detail_validity">validity</string>
+    <string name="contact_detail_type">type</string>
+    <string name="contact_detail_create_at">created at</string>
+    <string name="contact_detail_email">email</string>
+    <string name="error_import_contact">Import error, please check again</string>
+    <string name="error_email_format">Email format error!</string>
+    <string name="error_password_mismatch">Password does not match!</string>
+    <string name="error_create_key">Generate Error!</string>
+    <string name="error_private_key_empty">Private key can not be empty!</string>
+    <string name="error_import_private_key">Import error, please check again</string>
+    <string name="compose_without_signature">No signature</string>
+    <string name="error_compose_no_receiver">Please at least add one recipient</string>
+    <string name="warning_compose_no_signature">Continue without signing?</string>
+    <string name="error_interpret_empty_content">Interpret content can not be empty</string>
+    <string name="error_interpret_private_key_mismatch">Can not decrypt because you don\'t have the right private key</string>
+    <string name="intro_add_contact_title">Add your first contact</string>
+    <string name="intro_add_contact_desc">You do not have any contact yet. Add contacts by importing their public key</string>
+    <string name="intro_create_key_title">Create your first Key</string>
+    <string name="intro_create_key_desc">Create or import a keypair to start using.</string>
+    <string name="intro_message_title">Writing your first message</string>
+    <string name="intro_message_desc">No message yet. You can compose and interpret message. Message composed and interpreted in Tessercube keyboard will appear here</string>
+    <string name="empty_message">No message yet. \nYou can compose and interpret message. \nMessage composed and interpreted in Tessercube keyboard will appear here</string>
+    <string name="interpret_status_nothing">Nothing to interpret!</string>
+    <string name="interpret_status_failed">Failed to interpret!</string>
+    <string name="sign_status_no_signature">Poor message, doesn\'t have signature.</string>
+    <string name="sign_status_bad">Bad signature! Possibly fake sender!</string>
+    <string name="sign_status_ok">Right Signature!</string>
+    <string name="sign_status_unknown">UnKnown sender, keep caution</string>
+    <string name="message_unknown_sender_title">[Unknown]</string>
+    <string name="message_email_expand">And <xliff:g example="0" id="count">%d</xliff:g> more (tap to expand)</string>
+    <string name="message_show_full_content">Show full <xliff:g example="0" id="count">%d</xliff:g> lines</string>
+    <string name="message_hide_full_content">Hide full <xliff:g example="0" id="count">%d</xliff:g> lines</string>
+    <string name="message_composed_time"><xliff:g example="Moments ago" id="time">%s</xliff:g> composed</string>
+    <string name="message_interpreted_time"><xliff:g example="Moments ago" id="time">%s</xliff:g> interpreted</string>
+    <string name="compose_to">To:</string>
+    <string name="compose_from">From:</string>
+    <string name="compose_message">Message goes here…</string>
+    <string name="send_message">Send Message</string>
+    <string name="name">Name</string>
+    <string name="email">Email Address</string>
+    <string name="password">Password</string>
+    <string name="password_confirm">Confirm Password</string>
+    <string name="publish_publish_key">Publish Publish Key</string>
+    <string name="create_key">Create Key</string>
+    <string name="trust_level">Trust Level</string>
+    <string name="update_from_key_servers">Update from Key Servers</string>
+    <string name="delete_contact">Delete Contact</string>
+    <string name="public_key">Public Key</string>
+    <string name="string_import">Import</string>
+    <string name="import_from_pgp">From PGP…</string>
+    <string name="paste_private_key">Paste Private Key</string>
+    <string name="import_from_another_device">From another device…</string>
+    <string name="scan_qr_code">Scan QR Code</string>
+    <string name="import_from_a_previous_backup">From a previous backup</string>
+    <string name="mnemonic_words">Mnemonic Words</string>
+    <string name="maybe_later">Maybe Later</string>
+    <string name="private_key">Private Key</string>
+    <string name="import_key">Import Key</string>
+    <string name="interpret_message_goes_here">Message goes here</string>
+    <string name="description">Description</string>
+    <string name="compose">Compose</string>
+    <string name="interpret">Interpret</string>
+    <string name="empty_contact">You do not have any contact yet\nAdd contacts by importing their public key</string>
+    <string name="select_recipients">Select recipients</string>
+    <string name="message_signed_by">Signed by:</string>
+    <string name="message_recipeints">Recipeints:</string>
+    <string name="encrypt">Encrypt</string>
+    <string name="contacts">Contacts</string>
+    <string name="me">Me</string>
+    <string name="create_keypair">Create Keypair</string>
+    <string name="import_keypair">Import Keypair</string>
+    <string name="settings">Settings</string>
+    <string name="message">Messages</string>
+    <string name="done">Done</string>
+    <string name="edit">Edit</string>
+    <string name="add">Add</string>
+    <string name="search">Search</string>
+    <string name="share_public_key">Share Public Key</string>
+    <string name="export_private_key">Export Private Key</string>
+    <string name="revoke">Revoke</string>
+    <string name="delete">Delete</string>
+    <string name="finish_amp_sign"><![CDATA[Finish & Sign]]></string>
+    <string name="mark_as_finished">Mark as Finished</string>
+    <string name="share_encrypted_message">Share Encrypted Message</string>
+    <string name="copy_text">Copy Text</string>
+    <string name="re_compose">Re-compose</string>
+    <string name="copy_clear_text">Copy Clear Text</string>
+    <string name="copy_raw_payload">Copy Raw Payload</string>
+    <string name="import_public_key">Import Public Key</string>
+    <string name="edit_contact">Edit Contact</string>
+    <string name="contact_detail">Contact Detail</string>
+    <string name="paste_private_key_title">Paste Private Key</string>
+    <string name="add_to_contact">Add add to contact</string>
+    <string name="add_private_key">Add private key</string>
+    <string name="error_import_empty">Nothing to import!</string>
+    <string name="error_private_key_format">Private key format error!</string>
+    <string name="error_pgp_message_format">Message format error!</string>
+    <string name="error_public_key_format">Public key format error!</string>
+    <string name="snack_share_message">Share the message right now?</string>
+    <string name="error_import_contact_already_exist">This key already exists!</string>
+    <string name="compose_save_draft">Save draft?</string>
+    <string name="draft">Draft</string>
+    <string name="floating_new_contact_title">New Contact!</string>
+    <string name="floating_new_contact_desc">Do you want to import the key right now?</string>
+    <string name="cancel">Cancel</string>
+    <string name="key_length">Key length</string>
+    <string name="error_interpret_already_exist">Content already been decrypted!</string>
+    <string name="tutorial_1_title">Import Public Keys</string>
+    <string name="tutorial_1_desc">You can import OpenPGP public keys\nby tapping "+" button in Contacts view\nand pasting in the full public key</string>
+    <string name="tutorial_2_title">Type and Encrypt</string>
+    <string name="tutorial_2_desc">With Tessercube Keyboard, after\ntyping a message, you can tap the "tesseract" icon and select recipients\n to encrypt for them</string>
+    <string name="tutorial_3_title">Copy to Interpret</string>
+    <string name="tutorial_3_desc">Copy an encrypted message in a chat\nview to interpret the message. You\ncan also tap the key icon in text edit\narea to interpret the text in the field.</string>
+    <string name="next">Next</string>
+    <string name="start_using">Start Using</string>
+    <string name="skip">Skip</string>
+    <string name="easy_mode">Easy Mode</string>
+    <string name="password_conform_desc">At least 8 characters, must match</string>
+    <string name="password_desc">At least 8 characters</string>
+    <string name="algorithm">Algorithm</string>
+    <string name="timeline">Timeline</string>
+    <string name="saved_drafts">Saved Drafts</string>
+</resources>

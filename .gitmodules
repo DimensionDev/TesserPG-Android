@@ -1,0 +1,8 @@
+[submodule "inputmethodcommon"]
+	path = inputmethodcommon
+	url = https://android.googlesource.com/platform/frameworks/opt/inputmethodcommon
+	branch = pie-platform-release
+[submodule "LatinIME"]
+	path = LatinIME
+	url = https://github.com/DimensionDev/LatinIME.git
+	branch = pie-fork

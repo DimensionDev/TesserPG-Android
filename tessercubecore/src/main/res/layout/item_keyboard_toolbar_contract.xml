@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_marginStart="4dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:background="@drawable/ic_contract_name_background"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:text="Dsadsa"
+    android:textColor="@android:color/white"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+</TextView>

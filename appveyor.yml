@@ -1,0 +1,32 @@
+image: Ubuntu1804
+environment:
+  ANDROID_COMPILE_SDK: "28"
+  ANDROID_SDK_TOOLS: "28.0.3"
+  ANDROID_SDK_VERSION: "4333796"
+  ANDROID_NDK_VERSION: "18b"
+  GIT_SUBMODULE_STRATEGY: recursive
+  JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64
+
+build_script:
+  - which java && which javac && java -version
+  - echo java home is $JAVA_HOME
+  - git submodule update --init --recursive
+  - sudo apt update && sudo apt install -y curl bsdtar make file && sudo rm -rf /var/lib/apt/lists/*
+  - sudo mkdir -p $PWD/android-sdk
+  - sudo curl https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_VERSION}.zip | sudo bsdtar -xpf- -C $PWD/android-sdk
+  - export ANDROID_SDK_HOME="$PWD/android-sdk"
+  - export ANDROID_HOME="$ANDROID_SDK_HOME"
+  - export NDK_HOME="$ANDROID_SDK_HOME/ndk-bundle"
+  - export ANDROID_NDK="$NDK_HOME"
+  - export ANDROID_NDK_HOME="$NDK_HOME"
+  - export ANDROID_NDK_ROOT="$NDK_HOME"
+  - export PATH="${ANDROID_SDK_HOME}/tools/bin:${ANDROID_SDK_HOME}/platform-tools:${ANDROID_NDK_HOME}:${PATH}"
+  - sudo chmod -R 777 ${ANDROID_HOME}
+  - unset JAVA_TOOL_OPTIONS
+  - echo y | sdkmanager "ndk-bundle" "build-tools;${ANDROID_SDK_TOOLS}" "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}"
+  - chmod +x ./gradlew
+  - ./gradlew assembleDebug
+  
+artifacts:
+- path: '**\*.apk'
+  name: apk

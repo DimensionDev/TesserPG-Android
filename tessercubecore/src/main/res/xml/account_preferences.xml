@@ -1,0 +1,7 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceScreen
+        android:persistent="false"
+        android:selectable="false"
+        android:summary=""
+        android:title="Privacy" />
+</PreferenceScreen>

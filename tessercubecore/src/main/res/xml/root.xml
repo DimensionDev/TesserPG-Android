@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.preference.PreferenceCategory
+        app:title="Keyboard">
+        <androidx.preference.ListPreference
+            app:key="keyboard_default_signature"
+            app:title="Message Digital Signature"/>
+        <androidx.preference.SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="keyboard_lowercase_key"
+            app:title="Show Lowercase Keys"/>
+    </androidx.preference.PreferenceCategory>
+</androidx.preference.PreferenceScreen>

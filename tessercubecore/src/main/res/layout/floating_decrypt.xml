@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moe.tlaster.floatinghover.FloatingView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@android:color/black"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:layout_marginTop="64dp"
+        android:elevation="8dp"
+        android:src="@mipmap/ic_launcher_tessercube_round"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <FrameLayout
+        android:layout_margin="16dp"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.sujitech.tessercubecore.widget.MessageCard
+            android:id="@+id/floating_decrypt_message_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/floating_contact_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="8dp"
+                tools:background="@android:color/holo_green_dark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:padding="4dp"
+                    android:text="@string/floating_new_contact_title"
+                    style="@style/TextAppearance.AppCompat.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:padding="4dp"
+                    android:text="@string/floating_new_contact_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <com.sujitech.tessercubecore.widget.ContactView
+                    android:id="@+id/floating_contact_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/floating_contact_confirm_button"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:textAllCaps="false"
+                    android:text="@string/import_key"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:id="@+id/floating_contact_cancel_button"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:textAllCaps="false"
+                    android:text="@string/cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+
+
+</moe.tlaster.floatinghover.FloatingView>

@@ -1,0 +1,66 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/android:api-28-ndk
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "19:bf:2c:90:2d:04:f1:d5:55:1d:4c:c3:ed:0d:c7:e1"
+      - run: git submodule update --init --recursive
+      - run: echo y | sdkmanager "ndk-bundle" "platforms;android-28"
+      - run: echo $SIGN_KEY_BASE64 | base64 --decode >> ${HOME}/keystore.jks
+      - run: chmod +x ./gradlew
+      - run: ./gradlew assembleRelease -PversionCode=${CIRCLE_BUILD_NUM} -PappCenterEnabled=true -PappCenterId=${APP_CENTER_ID} -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
+      - store_artifacts:
+          path: ./app/build/outputs/apk/release/app-release.apk
+  deploy-build:
+    docker:
+      - image: circleci/android:api-28-ndk
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "19:bf:2c:90:2d:04:f1:d5:55:1d:4c:c3:ed:0d:c7:e1"
+      - run: git submodule update --init --recursive
+      - run: echo y | sdkmanager "ndk-bundle" "platforms;android-28"
+      - run: echo $SIGN_KEY_BASE64 | base64 --decode >> ${HOME}/keystore.jks
+      - run: chmod +x ./gradlew
+      - run: ./gradlew assembleRelease -PversionCode=${CIRCLE_BUILD_NUM} -PversionName="${CIRCLE_TAG}" -PappCenterEnabled=true -PappCenterId=${APP_CENTER_ID} -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
+      - store_artifacts:
+          path: ./app/build/outputs/apk/release/app-release.apk
+      - persist_to_workspace:
+          root: app/build/outputs/apk/release/
+          paths:
+            - app-release.apk
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: /app/build/outputs/apk/release
+      - run:
+          name: "Publish Release on GitHub"
+          command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} /app/build/outputs/apk/release/app-release.apk
+workflows:
+  version: 2
+  just-build:
+    jobs:
+      - build
+  build-n-deploy:
+    jobs:
+      - deploy-build:
+          filters:
+            tags:
+              only: /(?<=^[Vv]|^)(?:(?<major>(?:0|[1-9](?:(?:0|[1-9])+)*))[.](?<minor>(?:0|[1-9](?:(?:0|[1-9])+)*))[.](?<patch>(?:0|[1-9](?:(?:0|[1-9])+)*))(?:-(?<prerelease>(?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:0|[1-9](?:(?:0|[1-9])+)*))(?:[.](?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:0|[1-9](?:(?:0|[1-9])+)*)))*))?(?:[+](?<build>(?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:(?:0|[1-9])+))(?:[.](?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:(?:0|[1-9])+)))*))?)$/
+            branches:
+              ignore: /.*/
+      - publish-github-release:
+          requires:
+            - deploy-build
+          filters:
+            tags:
+              only: /(?<=^[Vv]|^)(?:(?<major>(?:0|[1-9](?:(?:0|[1-9])+)*))[.](?<minor>(?:0|[1-9](?:(?:0|[1-9])+)*))[.](?<patch>(?:0|[1-9](?:(?:0|[1-9])+)*))(?:-(?<prerelease>(?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:0|[1-9](?:(?:0|[1-9])+)*))(?:[.](?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:0|[1-9](?:(?:0|[1-9])+)*)))*))?(?:[+](?<build>(?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:(?:0|[1-9])+))(?:[.](?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:(?:0|[1-9])+)))*))?)$/
+            branches:
+              ignore: /.*/

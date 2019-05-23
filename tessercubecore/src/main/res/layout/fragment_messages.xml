@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/message_fragment_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.MessagesFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        app:title="@string/message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/ToolBar" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <androidx.recyclerview.widget.RecyclerView
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/coordinator"
+        android:layout_width="0dp"
+        android:layout_height="0dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_gravity="end|bottom"
+            android:id="@+id/add_button"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_add_black_24dp"
+            android:tint="@android:color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <View
+        android:id="@+id/floating_button_wrap"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="56dp"
+        android:layout_height="56dp"/>
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/message_actions_container"
+        app:layout_constraintTop_toTopOf="@id/floating_button_wrap"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorPrimary">
+        <Button
+            android:id="@+id/compose_button"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textAllCaps="false"
+            android:text="@string/compose"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+        <Button
+            android:id="@+id/interpret_button"
+            android:text="@string/interpret"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

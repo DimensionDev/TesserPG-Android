@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.sujitech.tessercubecore">
+
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <application android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".activity.SettingsActivity"></activity>
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.TutorialActivity"></activity>
+
+        <service
+            android:name=".service.DummyAccountService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <activity
+            android:name=".activity.message.InterpretActivity"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter android:label="@string/interpret">
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter android:label="@string/interpret">
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.message.ComposeActivity"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter android:label="@string/encrypt">
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.contact.EditContactActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.keypair.InputPrivateKeyActivity"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter android:label="@string/add_private_key">
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.keypair.ImportKeyActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.keypair.CreateKeyActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".activity.contact.ContactDetailActivity" />
+        <activity
+            android:name=".activity.contact.ImportContactActivity"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter android:label="@string/add_to_contact">
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.IndexActivity"
+            android:windowSoftInputMode="adjustResize" />
+    </application>
+
+</manifest>

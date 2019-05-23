@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="CommandButton">
+        <attr name="text" format="string" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
+</resources>

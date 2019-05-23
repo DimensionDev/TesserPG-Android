@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.gridlayout.widget.GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:columnCount="2"
+    app:rowCount="5">
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:id="@+id/widget_contact_name"
+        android:layout_margin="4dp"
+        tools:text="dsaddfsafdsa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/contact_detail_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:id="@+id/widget_contact_email"
+        android:layout_margin="4dp"
+        tools:text="dsaddfsafdsa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/contact_detail_fingerprint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:id="@+id/widget_contact_fingerprint"
+        android:layout_margin="4dp"
+        tools:text="dsaddfsafdsa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/contact_detail_create_at"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:id="@+id/widget_contact_created_at"
+        android:layout_margin="4dp"
+        tools:text="dsaddfsafdsa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</androidx.gridlayout.widget.GridLayout>

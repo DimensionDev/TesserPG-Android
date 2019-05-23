@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_share_public_key"
+        android:title="@string/share_public_key"
+        />
+    <item
+        android:id="@+id/menu_export_private_key"
+        android:title="@string/export_private_key"
+        />
+    <item
+        android:id="@+id/menu_revoke"
+        android:title="@string/revoke"
+        />
+    <item
+        android:id="@+id/menu_delete"
+        android:title="@string/delete"
+        />
+</menu>
