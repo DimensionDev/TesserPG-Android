@@ -18,6 +18,8 @@ jobs:
   deploy-build:
     docker:
       - image: circleci/android:api-28-ndk
+    environment:
+      JVM_OPTS: -Xmx2048m
     steps:
       - checkout
       - add_ssh_keys:
