@@ -1,9 +1,11 @@
 package com.sujitech.tessercubecore.common
-
-import com.microsoft.appcenter.analytics.Analytics
+import android.app.Application
 
 object DataTracking {
+    fun init(app: Application) {
+        // Do nothing
+    }
     fun track(name: String, data: Map<String, String>) {
-        Analytics.trackEvent(name, data)
+        // Do nothing
     }
 }

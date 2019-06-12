@@ -8,11 +8,9 @@ import android.content.Intent
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.microsoft.appcenter.utils.HandlerUtils
 import com.sujitech.tessercubecore.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.sujitech.tessercubecore.activity.BaseActivity
+import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -37,18 +35,23 @@ fun Context.task(block: suspend CoroutineScope.() -> Unit) {
                 setCanceledOnTouchOutside(false)
             }
     progress.show()
+    if (this is BaseActivity) {
+        this.onDestroyCallback = {
+            progress.dismiss()
+        }
+    }
     GlobalScope.launch {
         kotlin.runCatching {
             block.invoke(this)
         }.onFailure {
             it.printStackTrace()
-            HandlerUtils.runOnUiThread {
+            withContext(Dispatchers.Main) {
                 it.message?.let { it1 ->
                     Toast.makeText(this@task, it1, Toast.LENGTH_SHORT).show()
                 }
             }
         }
-        HandlerUtils.runOnUiThread {
+        withContext(Dispatchers.Main) {
             progress.dismiss()
         }
     }
@@ -59,47 +62,51 @@ fun Context.toast(content: String) {
 }
 
 suspend fun Context.inputAlert(title: String, type: Int = android.text.InputType.TYPE_CLASS_TEXT) = suspendCoroutine<String> { ct ->
-    HandlerUtils.runOnUiThread {
-        val editText = EditText(this).apply {
-            inputType = type
-            setPadding(8.dp, 8.dp, 8.dp, 8.dp)
-        }
-        AlertDialog.Builder(this)
-                .setMessage(title)
-                .setView(editText)
-                .setNegativeButton(android.R.string.cancel) { _, _ ->
-                    ct.resume("")
-                }
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    ct.resume(editText.text.toString())
-                }
-                .setOnCancelListener {
-                    ct.resume("")
-                }
+    GlobalScope.launch {
+        withContext(Dispatchers.Main) {
+            val editText = EditText(this@inputAlert).apply {
+                inputType = type
+                setPadding(8.dp, 8.dp, 8.dp, 8.dp)
+            }
+            AlertDialog.Builder(this@inputAlert)
+                    .setMessage(title)
+                    .setView(editText)
+                    .setNegativeButton(android.R.string.cancel) { _, _ ->
+                        ct.resume("")
+                    }
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        ct.resume(editText.text.toString())
+                    }
+                    .setOnCancelListener {
+                        ct.resume("")
+                    }
 //                .setOnDismissListener {
 //                    ct.resume("")
 //                }
-                .show()
+                    .show()
+        }
     }
 }
 
 suspend fun Context.alert(title: String) = suspendCoroutine<Boolean> { ct ->
-    HandlerUtils.runOnUiThread {
-        AlertDialog.Builder(this)
-                .setMessage(title)
-                .setNegativeButton(android.R.string.cancel) { _, _ ->
-                    ct.resume(false)
-                }
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    ct.resume(true)
-                }
-                .setOnCancelListener {
-                    ct.resume(false)
-                }
+    GlobalScope.launch {
+        withContext(Dispatchers.Main) {
+            AlertDialog.Builder(this@alert)
+                    .setMessage(title)
+                    .setNegativeButton(android.R.string.cancel) { _, _ ->
+                        ct.resume(false)
+                    }
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        ct.resume(true)
+                    }
+                    .setOnCancelListener {
+                        ct.resume(false)
+                    }
 //                .setOnDismissListener {
 //                    ct.resume(false)
 //                }
-                .show()
+                    .show()
+        }
     }
 }
 

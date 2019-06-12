@@ -1,0 +1,77 @@
+apply plugin: "com.android.application"
+
+android {	
+    compileSdkVersion target_version	
+    defaultConfig {	
+        applicationId app_id
+        minSdkVersion min_version	
+        targetSdkVersion target_version	
+        versionCode 200
+        versionName '0.2.5.1'
+    }
+
+    signingConfigs {
+        playRelease {
+            storeFile file(signConfig['keyStore'])
+            storePassword signConfig['keyStorePassword']
+            keyAlias signConfig['keyAlias']
+            keyPassword signConfig['keyPassword']
+        }
+    }
+
+
+    flavorDimensions "version"
+    productFlavors {
+        fdroid {
+        }
+        play {
+        }
+    }
+
+    buildTypes {
+        release {
+            productFlavors.play.signingConfig signingConfigs.playRelease
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+        }
+    }
+
+    sourceSets {	
+        main {	
+            manifest.srcFile '../LatinIME/java/AndroidManifest.xml'	
+            java.srcDirs = ['../LatinIME/java/src', '../LatinIME/common/src', '../LatinIME/java-overridable/src', '../inputmethodcommon/java']	
+            res.srcDirs = ['../LatinIME/java/res', '../LatinIME/java-overridable/res']	
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {	
+            path "../LatinIME/native/jni/Android.mk"
+        }
+    }
+
+    lintOptions {	
+        abortOnError false	
+        checkReleaseBuilds false
+    }
+
+    defaultConfig {
+        externalNativeBuild {	
+            ndkBuild {	
+                // Suppress build failing warnings from dependencies	
+                cFlags "-w"	
+                arguments "TARGET_BUILD_APPS=true"	
+            }
+        }
+    }
+    compileOptions {	
+        sourceCompatibility 1.8	
+        targetCompatibility 1.8
+    }
+}
+
+dependencies {
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'	
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'	
+    implementation project(':tessercubecore')
+}

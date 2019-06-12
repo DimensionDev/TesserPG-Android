@@ -23,4 +23,11 @@ abstract class BaseActivity: AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onDestroyCallback?.invoke()
+    }
+
+    public var onDestroyCallback: (() -> Unit)? = null
 }
