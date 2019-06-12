@@ -1,21 +1,13 @@
 apply plugin: "com.android.application"
 
-def getVersionCode = { ->
-    return project.hasProperty('versionCode') ? versionCode.toInteger() : 1
-}
-
-def getVersionName = { ->
-    return project.hasProperty('versionName') ? versionName : "0.0"
-}
-
 android {	
     compileSdkVersion target_version	
     defaultConfig {	
         applicationId app_id
         minSdkVersion min_version	
         targetSdkVersion target_version	
-        versionCode version_code	
-        versionName version_name	
+        versionCode 200
+        versionName '0.2.5.1'
     }
 
     signingConfigs {
@@ -31,14 +23,8 @@ android {
     flavorDimensions "version"
     productFlavors {
         fdroid {
-            versionCode 1
-            versionName = '0.2.5'
-            applicationIdSuffix ".fdroid"
-            versionNameSuffix "-fdroid"
         }
         play {
-            versionCode getVersionCode()
-            versionName = getVersionName()
         }
     }
 
