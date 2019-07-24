@@ -32,11 +32,9 @@ android {
     }
     sourceSets {
         fdroid.java.srcDirs = [
-                './src/fdroid_main/java',
                 './src/main/java'
         ]
         play.java.srcDirs = [
-                './src/play_main/java',
                 './src/main/java'
         ]
     }
@@ -69,8 +67,8 @@ dependencies {
     implementation "moe.tlaster:kotlinpgp:1.0.20"
     implementation "com.romandanylyk:pageindicatorview:1.0.3"
 
-    playImplementation "com.microsoft.appcenter:appcenter-analytics:${dependencyVersion['appCenter']}"
-    playImplementation "com.microsoft.appcenter:appcenter-crashes:${dependencyVersion['appCenter']}"
+//    playImplementation "com.microsoft.appcenter:appcenter-analytics:${dependencyVersion['appCenter']}"
+//    playImplementation "com.microsoft.appcenter:appcenter-crashes:${dependencyVersion['appCenter']}"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${dependencyVersion['leakcanary']}"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${dependencyVersion['leakcanary']}"
     debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:${dependencyVersion['leakcanary']}"

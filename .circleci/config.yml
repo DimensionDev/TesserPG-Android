@@ -12,7 +12,7 @@ jobs:
       - run: echo y | sdkmanager "ndk-bundle" "platforms;android-28"
       - run: echo $SIGN_KEY_BASE64 | base64 --decode >> ${HOME}/keystore.jks
       - run: chmod +x ./gradlew
-      - run: ./gradlew assembleRelease -PversionCode=$((CIRCLE_BUILD_NUM + 177)) -PappCenterEnabled=true -PappCenterId=${APP_CENTER_ID} -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
+      - run: ./gradlew assembleRelease -PversionCode=$((CIRCLE_BUILD_NUM + 177)) -PappCenterEnabled=false -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
       - store_artifacts:
           path: ./app/build/outputs/apk/play/release/app-play-release.apk
   deploy-build:
@@ -29,7 +29,7 @@ jobs:
       - run: echo y | sdkmanager "ndk-bundle" "platforms;android-28"
       - run: echo $SIGN_KEY_BASE64 | base64 --decode >> ${HOME}/keystore.jks
       - run: chmod +x ./gradlew
-      - run: ./gradlew assembleRelease -PversionCode=$((CIRCLE_BUILD_NUM + 177)) -PversionName="${CIRCLE_TAG}" -PappCenterEnabled=true -PappCenterId=${APP_CENTER_ID} -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
+      - run: ./gradlew assembleRelease -PversionCode=$((CIRCLE_BUILD_NUM + 177)) -PversionName="${CIRCLE_TAG}" -PappCenterEnabled=false -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
       - store_artifacts:
           path: ./app/build/outputs/apk/play/release/app-play-release.apk
       - persist_to_workspace:
