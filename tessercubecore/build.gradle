@@ -32,11 +32,9 @@ android {
     }
     sourceSets {
         fdroid.java.srcDirs = [
-                './src/fdroid_main/java',
                 './src/main/java'
         ]
         play.java.srcDirs = [
-                './src/play_main/java',
                 './src/main/java'
         ]
     }
@@ -51,10 +49,10 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.0"
     implementation "androidx.preference:preference:1.1.0-beta01"
 
-    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta1"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta2"
     implementation "androidx.transition:transition:1.2.0-alpha01"
     implementation "androidx.appcompat:appcompat:1.1.0-beta01"
-    implementation "androidx.core:core-ktx:1.2.0-alpha01"
+    implementation "androidx.core:core-ktx:1.2.0-alpha02"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "com.google.android.material:material:1.0.0"
     implementation "androidx.gridlayout:gridlayout:1.0.0"
@@ -69,8 +67,8 @@ dependencies {
     implementation "moe.tlaster:kotlinpgp:1.0.20"
     implementation "com.romandanylyk:pageindicatorview:1.0.3"
 
-    playImplementation "com.microsoft.appcenter:appcenter-analytics:${dependencyVersion['appCenter']}"
-    playImplementation "com.microsoft.appcenter:appcenter-crashes:${dependencyVersion['appCenter']}"
+//    playImplementation "com.microsoft.appcenter:appcenter-analytics:${dependencyVersion['appCenter']}"
+//    playImplementation "com.microsoft.appcenter:appcenter-crashes:${dependencyVersion['appCenter']}"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${dependencyVersion['leakcanary']}"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${dependencyVersion['leakcanary']}"
     debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:${dependencyVersion['leakcanary']}"

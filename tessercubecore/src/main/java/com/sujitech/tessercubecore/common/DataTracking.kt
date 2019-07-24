@@ -1,4 +1,5 @@
 package com.sujitech.tessercubecore.common
+
 import android.app.Application
 
 object DataTracking {
