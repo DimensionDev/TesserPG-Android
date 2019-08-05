@@ -1,7 +1,10 @@
 apply plugin: "com.android.application"
 
 android {	
-    compileSdkVersion target_version	
+    compileSdkVersion target_version
+    aaptOptions {
+        noCompress 'dat'
+    }
     defaultConfig {	
         applicationId app_id
         minSdkVersion min_version	
@@ -72,6 +75,7 @@ android {
 
 dependencies {
     implementation 'com.google.code.findbugs:jsr305:3.0.2'	
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'	
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation project(':tessercubecore')
+    implementation project(':PinyinIME')
 }
