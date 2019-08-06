@@ -8,12 +8,10 @@ import android.view.View
 import android.widget.Button
 import com.squareup.leakcanary.LeakCanary
 import com.sujitech.tessercubecore.activity.contact.ContactDetailActivity
-import com.sujitech.tessercubecore.common.DataTracking
 import com.sujitech.tessercubecore.common.FloatingHoverUtils
 import com.sujitech.tessercubecore.common.MessageDataUtils
 import com.sujitech.tessercubecore.common.extension.getClipboardText
 import com.sujitech.tessercubecore.common.extension.toContactData
-import com.sujitech.tessercubecore.common.isAppCenterEnabled
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.KeyData
 import com.sujitech.tessercubecore.widget.ContactView
@@ -56,9 +54,6 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
-        if (isAppCenterEnabled) {
-            DataTracking.init(this)
-        }
 
         if (!LeakCanary.isInAnalyzerProcess(this)) {
             LeakCanary.install(this)
