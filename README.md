@@ -35,6 +35,9 @@ You can run a debug build using
 # Dependency
 - Kotlin
 - AndroidX
+- [LatinIME](https://android.googlesource.com/platform/packages/inputmethods/LatinIME/)
+- [PinyinIME](https://android.googlesource.com/platform/packages/inputmethods/PinyinIME/)
+- [inputmethodcommon](https://android.googlesource.com/platform/frameworks/opt/inputmethodcommon/)
 - [Dexter](https://github.com/Karumi/Dexter)
 - [RxJava](https://github.com/ReactiveX/RxJava)
 - [MaterialTapTargetPrompt](https://github.com/sjwall/MaterialTapTargetPrompt)
