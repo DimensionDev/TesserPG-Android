@@ -9,8 +9,8 @@ android {
         applicationId app_id
         minSdkVersion min_version	
         targetSdkVersion target_version	
-        versionCode 201
-        versionName '0.2.5.2'
+        versionCode 210
+        versionName '0.2.6'
     }
 
     signingConfigs {
