@@ -19,25 +19,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    flavorDimensions "version"
-    productFlavors {
-        fdroid {
-            buildConfigField 'boolean', 'IS_APP_CENTER_ENABLED', 'false'
-            resValue 'string', 'app_center_id', ''
-        }
-        play {
-            buildConfigField 'boolean', 'IS_APP_CENTER_ENABLED', appcenter['enabled']
-            resValue 'string', 'app_center_id', appcenter['id']
-        }
-    }
-    sourceSets {
-        fdroid.java.srcDirs = [
-                './src/main/java'
-        ]
-        play.java.srcDirs = [
-                './src/main/java'
-        ]
-    }
+
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
@@ -66,9 +48,6 @@ dependencies {
     implementation "moe.tlaster:floatinghover:1.0.8"
     implementation "moe.tlaster:kotlinpgp:1.0.20"
     implementation "com.romandanylyk:pageindicatorview:1.0.3"
-
-//    playImplementation "com.microsoft.appcenter:appcenter-analytics:${dependencyVersion['appCenter']}"
-//    playImplementation "com.microsoft.appcenter:appcenter-crashes:${dependencyVersion['appCenter']}"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${dependencyVersion['leakcanary']}"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${dependencyVersion['leakcanary']}"
     debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:${dependencyVersion['leakcanary']}"

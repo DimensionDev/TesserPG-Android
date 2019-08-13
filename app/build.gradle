@@ -1,7 +1,10 @@
 apply plugin: "com.android.application"
 
 android {	
-    compileSdkVersion target_version	
+    compileSdkVersion target_version
+    aaptOptions {
+        noCompress 'dat'
+    }
     defaultConfig {	
         applicationId app_id
         minSdkVersion min_version	
@@ -11,7 +14,7 @@ android {
     }
 
     signingConfigs {
-        playRelease {
+        release {
             storeFile file(signConfig['keyStore'])
             storePassword signConfig['keyStorePassword']
             keyAlias signConfig['keyAlias']
@@ -19,18 +22,9 @@ android {
         }
     }
 
-
-    flavorDimensions "version"
-    productFlavors {
-        fdroid {
-        }
-        play {
-        }
-    }
-
     buildTypes {
         release {
-            productFlavors.play.signingConfig signingConfigs.playRelease
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt')
         }
@@ -72,6 +66,7 @@ android {
 
 dependencies {
     implementation 'com.google.code.findbugs:jsr305:3.0.2'	
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'	
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation project(':tessercubecore')
+    implementation project(':PinyinIME')
 }
