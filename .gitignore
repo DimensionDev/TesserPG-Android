@@ -58,3 +58,8 @@ freeline_project_description.json
 \.idea/
 
 \.circleci/keys/
+
+.cxx
+.settings
+.project
+.classpath

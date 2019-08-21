@@ -7,7 +7,7 @@
     <com.sujitech.tessercubecore.widget.BlockedViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="200dp">
         <include layout="@layout/view_keyboard_interpret"/>
         <include layout="@layout/view_keyboard_encrypt"/>
     </com.sujitech.tessercubecore.widget.BlockedViewPager>
