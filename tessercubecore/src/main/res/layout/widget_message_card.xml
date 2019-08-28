@@ -70,26 +70,38 @@
             android:id="@+id/widget_message_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <TextView
+                android:ellipsize="end"
+                app:layout_constraintEnd_toStartOf="@id/guideline"
+                app:layout_constraintTop_toTopOf="parent"
+                android:maxLines="1"
                 android:id="@+id/widget_message_compose_time"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/widget_message_content"
-                tools:text="dsadsa"
-                android:layout_width="wrap_content"
+                tools:text="dsadsadsadsadsadsadsadsadsadsadsadsadsadsa"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <TextView
+                android:ellipsize="end"
+                app:layout_constraintStart_toEndOf="@id/guideline"
                 android:layout_gravity="end"
+                android:maxLines="1"
                 android:id="@+id/widget_message_interpret_time"
                 app:layout_constraintBaseline_toBaselineOf="@id/widget_message_compose_time"
-                tools:text="dsadsadsa"
+                tools:text="dsadsadsadsadsadsadsadsadsadsadsadsadsadsa"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content" />
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <Button
             android:textAllCaps="false"
             android:id="@+id/widget_message_show_all_lines"
