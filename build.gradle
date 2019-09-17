@@ -42,7 +42,7 @@ subprojects {
                 requery : "1.5.1",
                 glide : "4.9.0",
                 leakcanary : "1.6.3",
-                bouncycastle : "1.61"
+                bouncycastle : '1.62'
             ]
         }
     }
