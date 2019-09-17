@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:background="#FAFAFA"
+            android:background="?android:colorBackground"
             android:padding="8dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
