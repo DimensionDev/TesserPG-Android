@@ -1,4 +1,4 @@
-package com.sujitech.tessercubecore.widget
+package com.sujitech.tessercubecore.keyboard
 
 import android.content.Context
 import android.util.AttributeSet
@@ -26,7 +26,7 @@ interface ToolbarActionsListener {
     suspend fun requestEncrypt(content: String, pubKeys: List<ContactData>): String
 }
 
-class KeyboardEncryptToolBar : RelativeLayout, KeyboardEncryptView.Listener {
+class KeyboardEncryptToolBar : RelativeLayout, KeyboardExtendView.Listener {
     override fun getCurrentItems(): List<ContactData> {
         return encrypt_toolbar_list.getItemsSource() ?: emptyList()
     }

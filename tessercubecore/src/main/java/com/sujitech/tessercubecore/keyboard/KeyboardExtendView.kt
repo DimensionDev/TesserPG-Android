@@ -1,4 +1,4 @@
-package com.sujitech.tessercubecore.widget
+package com.sujitech.tessercubecore.keyboard
 
 import android.content.Context
 import android.graphics.Color
@@ -7,10 +7,12 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionManager
 import com.sujitech.tessercubecore.R
@@ -27,7 +29,7 @@ import com.sujitech.tessercubecore.common.toColor
 import com.sujitech.tessercubecore.data.*
 import kotlinx.android.synthetic.main.view_keyboard_encrypt.view.*
 import kotlinx.android.synthetic.main.view_keyboard_interpret.view.*
-import kotlinx.android.synthetic.main.widget_keyboard_encrypt_view.view.*
+import kotlinx.android.synthetic.main.widget_keyboard_extend_view.view.*
 import moe.tlaster.kotlinpgp.KotlinPGP
 import moe.tlaster.kotlinpgp.data.EncryptParameter
 import moe.tlaster.kotlinpgp.data.PublicKeyData
@@ -35,7 +37,7 @@ import moe.tlaster.kotlinpgp.data.VerifyStatus
 import moe.tlaster.kotlinpgp.isPGPMessage
 import kotlin.math.max
 
-class KeyboardEncryptView : FrameLayout, ToolbarActionsListener {
+class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
     override suspend fun requestInterpret() {
         post {
 //            TransitionManager.beginDelayedTransition(this)
@@ -171,7 +173,7 @@ class KeyboardEncryptView : FrameLayout, ToolbarActionsListener {
     private var data = listOf<ContactData>()
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.widget_keyboard_encrypt_view, this)
+        LayoutInflater.from(context).inflate(R.layout.widget_keyboard_extend_view, this)
         viewPager.apply {
             adapter = ChildViewAdapter(viewPager)
             post {

@@ -1,4 +1,4 @@
-package com.sujitech.tessercubecore.widget
+package com.sujitech.tessercubecore.keyboard
 
 import android.content.ClipboardManager
 import android.content.Context
