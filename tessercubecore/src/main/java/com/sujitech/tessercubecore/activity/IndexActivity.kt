@@ -14,6 +14,7 @@ import com.sujitech.tessercubecore.common.adapter.FragmentAdapter
 import com.sujitech.tessercubecore.fragment.ContactsFragment
 import com.sujitech.tessercubecore.fragment.MeFragment
 import com.sujitech.tessercubecore.fragment.MessagesFragment
+import com.sujitech.tessercubecore.fragment.WalletFragment
 import kotlinx.android.synthetic.main.activity_index.*
 
 
@@ -23,6 +24,7 @@ class IndexActivity : BaseActivity() {
         listOf(
                 ContactsFragment(),
                 MessagesFragment(),
+                WalletFragment(),
                 MeFragment()
         )
     }

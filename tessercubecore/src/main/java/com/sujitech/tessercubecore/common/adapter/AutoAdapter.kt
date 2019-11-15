@@ -21,7 +21,7 @@ fun <T> RecyclerView.getItemsSource(): ObservableCollection<T>? {
     return null
 }
 
-fun <T> RecyclerView.updateItemsSource(newItems: Collection<T>?) {
+fun <T> RecyclerView.updateItemsSource(newItems: List<T>?) {
     val itemsSource = getItemsSource<T>()
     if (itemsSource != null) {
         itemsSource.clear()

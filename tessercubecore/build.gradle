@@ -64,6 +64,7 @@ dependencies {
     kapt "io.requery:requery-processor:${dependencyVersion['requery']}"
     implementation "org.bouncycastle:bcprov-jdk15on:${dependencyVersion['bouncycastle']}"
     implementation "org.bouncycastle:bcpg-jdk15on:${dependencyVersion['bouncycastle']}"
+    implementation 'org.web3j:core:4.2.0-android'
 
     testImplementation "junit:junit:4.12"
     androidTestImplementation "androidx.test:runner:1.2.0"
