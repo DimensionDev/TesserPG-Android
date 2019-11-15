@@ -90,6 +90,7 @@ class KeyboardExtendView : FrameLayout, IKeyboardExtendViewHost, IKeyboardNavHos
         }
         TransitionManager.beginDelayedTransition(encrypt_child_container)
         encrypt_child_container.removeAllViews()
+        showKeyboard()
         val view = clazz.getConstructor(Context::class.java).newInstance(context)
         if (view is IKeyboardExtendViewChild) {
             view.extendViewHost = this
@@ -106,6 +107,7 @@ class KeyboardExtendView : FrameLayout, IKeyboardExtendViewHost, IKeyboardNavHos
         }?.onRemove()
         TransitionManager.beginDelayedTransition(encrypt_child_container)
         encrypt_child_container.removeAllViews()
+        showKeyboard()
         if (backStack.any()) {
             encrypt_child_container.addView(backStack.pop())
         }

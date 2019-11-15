@@ -118,7 +118,6 @@ class ReceiverSelectView : KeyboardExtendChildView, View.OnFocusChangeListener {
     override fun onRemove() {
         super.onRemove()
         search_input.onFocusChangeListener = null
-        extendViewHost.showKeyboard()
     }
 
 

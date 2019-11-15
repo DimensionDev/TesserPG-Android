@@ -4,8 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
+import androidx.core.view.isVisible
 import com.sujitech.tessercubecore.R
 import kotlinx.android.synthetic.main.keyboard_encrypt.view.*
+import kotlinx.android.synthetic.main.layout_keyboard_mode_selection.view.*
 
 class EncryptView : KeyboardExtendChildView {
     override val layout: Int
@@ -25,6 +27,13 @@ class EncryptView : KeyboardExtendChildView {
             navHost.navigate<ReceiverSelectView>(builder.apply {
                 content = encrypt_input.text.toString()
             })
+        }
+        mode_button.setOnClickListener {
+            mode_selection_container.isVisible = !mode_selection_container.isVisible
+        }
+
+        mode_red_packet_button.setOnClickListener {
+            navHost.navigate<RedPacketView>()
         }
     }
 
