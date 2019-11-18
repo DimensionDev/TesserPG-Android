@@ -28,6 +28,7 @@ class RedPacketView : KeyboardExtendChildView, View.OnFocusChangeListener {
                 }
             }
         }
+        extendViewHost.finishInput()
     }
 
     override val layout: Int
