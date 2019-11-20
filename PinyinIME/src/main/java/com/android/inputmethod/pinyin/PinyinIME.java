@@ -526,7 +526,9 @@ public class PinyinIME extends InputMethodServiceProxy {
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_ENTER) {
             if (!realAction) return true;
-            if (mInputModeSwitcher.isEnterNoramlState()) {
+            if (mInputModeSwitcher.isEnterNoramlState() ||
+                    (getState() == ImeState.STATE_INPUT ||
+                    getState() == ImeState.STATE_COMPOSING)) {
                 commitResultText(mDecInfo.getOrigianlSplStr().toString());
                 resetToIdleState(false);
             } else {
