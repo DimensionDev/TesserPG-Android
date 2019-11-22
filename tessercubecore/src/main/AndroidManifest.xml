@@ -13,7 +13,8 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".activity.wallet.ImportWalletActivity"></activity>
+        <activity android:name=".activity.wallet.SendRedpacketActivity"></activity>
+        <activity android:name=".activity.wallet.ImportWalletActivity" />
         <activity android:name=".activity.wallet.MnemonicCodeConfirmActivity" />
         <activity android:name=".activity.wallet.MnemonicCodeBackupActivity" />
         <activity

@@ -1,0 +1,15 @@
+apply plugin: 'java-library'
+apply plugin: 'org.web3j'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.web3j:core:4.2.0-android"
+}
+
+web3j {
+    generatedPackageName = 'com.sujitech.tessercubecore.contracts.generated'
+}
+
+
+sourceCompatibility = "8"
+targetCompatibility = "8"

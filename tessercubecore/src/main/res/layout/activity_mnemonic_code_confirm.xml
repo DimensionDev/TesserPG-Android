@@ -47,6 +47,7 @@
         android:layout_height="wrap_content"/>
 
     <Button
+        android:id="@+id/confirm_button"
         android:layout_margin="8dp"
         android:textAllCaps="false"
         android:text="@string/done"

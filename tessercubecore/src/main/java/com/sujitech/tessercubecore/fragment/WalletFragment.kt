@@ -6,13 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.wallet.CreateWalletActivity
 import com.sujitech.tessercubecore.activity.wallet.ImportWalletActivity
+import com.sujitech.tessercubecore.activity.wallet.SendRedpacketActivity
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
-import com.sujitech.tessercubecore.common.extension.*
-import com.sujitech.tessercubecore.data.UserKeyData
+import com.sujitech.tessercubecore.common.adapter.updateItemsSource
+import com.sujitech.tessercubecore.common.extension.shareText
+import com.sujitech.tessercubecore.common.extension.toActivity
+import com.sujitech.tessercubecore.data.DbContext
+import com.sujitech.tessercubecore.data.WalletData
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_wallet.*
 
 class WalletFragment : ViewPagerFragment() {
@@ -61,36 +67,30 @@ class WalletFragment : ViewPagerFragment() {
         }
         recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = AutoAdapter<UserKeyData>(R.layout.item_me_key).apply {
+            adapter = AutoAdapter<WalletData>(R.layout.item_me_wallet).apply {
                 bindText(R.id.item_key_name) {
-                    it.contactData?.name ?: "[non]"
+                    "Wallet ${it.address.take(6)}"
                 }
                 bindText(R.id.item_key_fingerprint) {
-                    it.contactData?.keyData?.firstOrNull()?.fingerPrint?.toFormattedHexText()?.splitTo(5) ?: ""
+                    it.address
                 }
                 bindText(R.id.item_key_type) {
-                    it.type
+                    //TODO: eth
+                    ""
+                    //it.address
                 }
                 itemClicked += { sender, args ->
                     PopupMenu(context, sender as View).apply {
                         this.gravity = Gravity.END
-                        inflate(R.menu.me_user_key_recycler_view)
+                        inflate(R.menu.me_user_wallet_recycler_view)
                         setOnMenuItemClickListener {
                             when (it.itemId) {
-                                R.id.menu_share_public_key -> {
-                                    context.shareText(args.item.contactData?.pubKeyContent ?: "")
-                                    true
-                                }
-                                R.id.menu_export_private_key -> {
-                                    context.shareText(args.item.priKey)
-                                    true
-                                }
-                                R.id.menu_revoke -> {
-//                                    revokeUserKey(args.item)
+                                R.id.menu_share_address -> {
+                                    context.shareText(args.item.address)
                                     true
                                 }
                                 R.id.menu_delete -> {
-//                                    deleteUserKey(args.item)
+                                    deleteWallet(args.item)
                                     true
                                 }
                                 else -> false
@@ -99,6 +99,31 @@ class WalletFragment : ViewPagerFragment() {
                     }.show()
                 }
             }
+        }
+        create_redpacket_button.setOnClickListener {
+            context.toActivity<SendRedpacketActivity>()
+        }
+        subscribeWalletList()
+    }
+
+    private fun deleteWallet(item: WalletData) {
+        DbContext.data.delete(item).blockingGet()
+    }
+
+
+    private lateinit var walletSubscribe: Disposable
+
+    private fun subscribeWalletList() {
+        this.walletSubscribe = DbContext.data.select(WalletData::class).get().observableResult().subscribe {
+            recycler_view.updateItemsSource(it.toList())
+            empty_key_container.isVisible = !it.any()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (!walletSubscribe.isDisposed) {
+            walletSubscribe.dispose()
         }
     }
 }

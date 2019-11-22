@@ -3,15 +3,18 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
     dependencies {	
         classpath 'com.android.tools.build:gradle:3.5.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.web3j:web3j-gradle-plugin:4.5.0'
     }
 }
 
 allprojects {
     repositories {
+        maven { url "https://dl.bintray.com/ethereum/maven/" }
         google()
         mavenCentral()
         jcenter()	

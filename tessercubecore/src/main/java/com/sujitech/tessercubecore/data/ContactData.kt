@@ -80,6 +80,16 @@ interface KeyData: Persistable, Parcelable {
 }
 
 @Entity
+interface WalletData : Persistable, Parcelable {
+    @get:Key
+    @get:Generated
+    val dataId: Int
+    var address: String
+    var passwordId: String
+    var mnemonicId: String
+}
+
+@Entity
 interface UserKeyData : Persistable, Parcelable {
     @get:Key
     @get:Generated

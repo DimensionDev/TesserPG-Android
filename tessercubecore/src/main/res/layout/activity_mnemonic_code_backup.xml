@@ -15,10 +15,10 @@
         app:layout_constraintTop_toTopOf="parent"
         style="@style/ToolBar.WithBackIcon"/>
 
-    <include layout="@layout/item_wallet"
+    <include layout="@layout/item_me_wallet"
         android:id="@+id/wallet"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        android:layout_margin="8dp"
+        android:layout_margin="12dp"
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
 

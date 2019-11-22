@@ -1,10 +1,14 @@
 package com.sujitech.tessercubecore.activity.wallet
 
+import android.content.Intent
 import android.os.Bundle
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.common.extension.toActivity
+import com.sujitech.tessercubecore.common.extension.toast
 import kotlinx.android.synthetic.main.activity_create_wallet.*
+import org.web3j.crypto.WalletUtils
+import java.io.File
 
 
 class CreateWalletActivity : BaseActivity() {
@@ -19,22 +23,23 @@ class CreateWalletActivity : BaseActivity() {
 
     private fun createWallet() {
         val password = password_input.text.toString()
-        if (password.isEmpty()) {
+        val passwordConfim = password_confirm_input.text.toString()
+        if (password.isEmpty() || password.length < 8 || password != passwordConfim) {
+            // TODO
+            toast(getString(R.string.error_password_mismatch))
             return
         }
-//        val web3 = Web3j.build(HttpService("SERVER"))
-//
-//        val clientVersion = web3.web3ClientVersion().sendAsync().get()
-//        if (!clientVersion.hasError()) {
-//            //Connected
-//        } else {
-//            //Show Error
-//        }
-//        val result = WalletUtils.generateBip39Wallet(password, cacheDir)
-//        WalletUtils.loadBip39Credentials()
-//        val receipt = Transfer.sendFunds(web3, credentials, "ContractID", BigDecimal(1), Convert.Unit.ETHER).sendAsync().get()
 
+        val result = WalletUtils.generateBip39Wallet(password, cacheDir)
 
-        toActivity<MnemonicCodeBackupActivity>()
+        File(cacheDir, result.filename).delete()
+
+        toActivity<MnemonicCodeBackupActivity>(Intent().apply {
+            putExtra("password", password)
+            putExtra("mnemonic", result.mnemonic)
+        })
+
+        finish()
+
     }
 }

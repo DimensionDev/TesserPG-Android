@@ -55,6 +55,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/mode_red_packet_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
