@@ -14,6 +14,7 @@ import com.sujitech.tessercubecore.viewModel.wallet.SendRedPacketViewModel
 import kotlinx.android.synthetic.main.activity_send_redpacket.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.web3j.protocol.exceptions.TransactionException
 
 class SendRedpacketActivity : BaseActivity() {
 
@@ -58,8 +59,13 @@ class SendRedpacketActivity : BaseActivity() {
             kotlin.runCatching {
                 viewModel.commitRedPacket(data, receivers, walletPassword!!, walletMnemonic!!)
             }.onFailure {
+                it.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    toast("Error")
+                    if (it is RuntimeException || it is TransactionException) {
+                        toast(it.message ?: "Send Error")
+                    } else {
+                        toast("Send Error")
+                    }
                 }
             }.onSuccess {
                 withContext(Dispatchers.Main) {

@@ -19,6 +19,7 @@ import com.sujitech.tessercubecore.viewModel.wallet.ClaimFailureError
 import com.sujitech.tessercubecore.viewModel.wallet.ClaimViewModel
 import kotlinx.android.synthetic.main.activity_claim.*
 import kotlinx.coroutines.Dispatchers
+import org.web3j.protocol.exceptions.TransactionException
 
 class ClaimActivity : BaseActivity() {
 
@@ -83,7 +84,7 @@ class ClaimActivity : BaseActivity() {
                             data?.redPacketData?.let {
                                 DbContext.data.update(it).blockingGet()
                             }
-                            if (e is RuntimeException) {
+                            if (e is RuntimeException || e is TransactionException) {
                                 toast(e.message ?: "Claim Error")
                             } else {
                                 toast("Claim Error")
