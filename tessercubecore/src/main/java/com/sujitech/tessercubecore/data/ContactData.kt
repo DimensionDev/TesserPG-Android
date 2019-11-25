@@ -6,6 +6,7 @@ import android.os.Parcelable
 import com.tylersuehr.chips.Chip
 import io.requery.*
 import moe.tlaster.kotlinpgp.data.VerifyStatus
+import java.math.BigDecimal
 import java.util.*
 
 enum class TrustLevel {
@@ -118,6 +119,28 @@ interface MessageUserData : Persistable, Parcelable {
 }
 
 @Entity
+interface RedPacketData : Persistable, Parcelable {
+    @get:Key
+    @get:Generated
+    val dataId: Int
+    @get:ForeignKey
+    @get:OneToOne
+    val messageData: MessageData
+    var shares: Int
+    var price: BigDecimal
+    var fromMe: Boolean
+    var state: RedPacketState
+}
+
+enum class RedPacketState {
+    unknown,
+    notClaimed,
+    claimed,
+    claimFailed,
+    claimLate,
+}
+
+@Entity
 interface MessageData : Persistable, Parcelable {
     @get:Key
     @get:Generated
@@ -126,7 +149,10 @@ interface MessageData : Persistable, Parcelable {
     var messageFrom: MessageUserData?
     @get:OneToMany(mappedBy = "messageDataTo")
     val messageTo: MutableList<MessageUserData>
+    @get:OneToOne
+    var redPacketData: RedPacketData?
     var content: String
+    //PGP content
     var rawContent: String
     var composeTime: Date?
     var interpretTime: Date?

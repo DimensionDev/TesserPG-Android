@@ -15,15 +15,19 @@ import com.google.android.material.tabs.TabLayout
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.message.ComposeActivity
 import com.sujitech.tessercubecore.activity.message.InterpretActivity
+import com.sujitech.tessercubecore.activity.wallet.ClaimActivity
 import com.sujitech.tessercubecore.common.Settings
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
+import com.sujitech.tessercubecore.common.adapter.IItemSelector
 import com.sujitech.tessercubecore.common.adapter.getItemsSource
 import com.sujitech.tessercubecore.common.adapter.updateItemsSource
 import com.sujitech.tessercubecore.common.extension.shareText
 import com.sujitech.tessercubecore.common.extension.toActivity
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.MessageData
+import com.sujitech.tessercubecore.data.RedPacketState
 import com.sujitech.tessercubecore.widget.MessageCard
+import com.sujitech.tessercubecore.widget.RedPacketCard
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_messages.*
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
@@ -173,12 +177,38 @@ class MessagesFragment : ViewPagerFragment() {
         })
         recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = AutoAdapter<MessageData>(R.layout.item_message_card).apply {
+            adapter = AutoAdapter(object : IItemSelector<MessageData> {
+                override fun selectLayout(item: MessageData): Int {
+                    return if (item.redPacketData == null) {
+                        R.layout.item_message_card
+                    } else {
+                        R.layout.item_redpacket_card
+                    }
+                }
+            }).apply {
                 bindCustom<MessageCard>(R.id.item_message_card_root) { messageCard, messageData, _, _ ->
                     messageCard.messageData = messageData
                 }
+                bindCustom<RedPacketCard>(R.id.item_red_packet_card_root) { view, data, _, _ ->
+                    view.data = data
+                    view.setOnLongClickListener {
+                        if (data.redPacketData != null &&
+                                data.redPacketData?.fromMe == false) {
+                            showFromOthersPopupMenu(data, it)
+                            return@setOnLongClickListener true
+                        }
+                        false
+                    }
+                }
                 itemClicked += { sender, args ->
-                    if (args.item.fromMe) {
+                    if (args.item.redPacketData != null &&
+                            args.item.redPacketData?.fromMe == false &&
+                            args.item.redPacketData?.state != RedPacketState.claimed
+                    ) {
+                        context.toActivity<ClaimActivity>(Intent().apply {
+                            putExtra("data", args.item)
+                        })
+                    } else if (args.item.fromMe) {
                         if (args.item.isDraft) {
                             showDraftPopupMenu(args.item, sender as View)
                         } else {

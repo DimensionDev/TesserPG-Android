@@ -12,7 +12,7 @@
     <item
         android:title="Wallet"
         android:id="@+id/menu_wallet"
-        android:icon="@drawable/ic_chat_black_24dp"/>
+        android:icon="@drawable/ic_account_balance_wallet_black_24dp"/>
     <item
         android:title="@string/me"
         android:id="@+id/menu_me"

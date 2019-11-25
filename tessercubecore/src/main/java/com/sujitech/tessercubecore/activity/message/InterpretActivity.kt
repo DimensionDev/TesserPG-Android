@@ -105,11 +105,13 @@ class InterpretActivity : BaseActivity() {
                 val messageData = MessageDataUtils.getMessageDataFromEncryptedContent(this@InterpretActivity, pgpContent)
                 if (messageData != null) {
                     runOnUiThread {
-                        if (allowDuplicate) {
-                            DbContext.data.insert(messageData).blockingGet()
-                        }
+                        DbContext.data.insert(messageData).blockingGet()
                         callback?.invoke(messageData)
                         finish()
+                    }
+                } else {
+                    runOnUiThread {
+                        toast(getString(R.string.error_interpret_private_key_mismatch))
                     }
                 }
             } catch (e: PrivateKeyNotFoundError) {

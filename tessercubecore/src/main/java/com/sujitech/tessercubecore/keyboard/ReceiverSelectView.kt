@@ -6,6 +6,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
+import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
@@ -56,7 +57,7 @@ class ReceiverSelectView : KeyboardExtendChildView, View.OnFocusChangeListener {
         search_input.onFocusChangeListener = this
         extendViewHost.hideKeyboard()
         encrypt_contact_list.apply {
-            adapter = AutoAdapter<ContactData>(R.layout.item_message_contact, 8.dp).apply {
+            adapter = AutoAdapter<ContactData>(R.layout.item_message_contact).apply {
                 bindText(R.id.item_message_contact_title) {
                     it.name
                 }
@@ -66,6 +67,9 @@ class ReceiverSelectView : KeyboardExtendChildView, View.OnFocusChangeListener {
                 bindText(R.id.item_message_contact_hash) {
                     val fingerPrint = it.keyData.firstOrNull()?.fingerPrint
                     fingerPrint?.substring(max(fingerPrint.length - 8, 0)) ?: ""
+                }
+                bindCustom<View>(R.id.item_message_contact_root) { view, _, _, _ ->
+                    view.updatePadding(8.dp, 8.dp, 8.dp, 8.dp)
                 }
                 itemClicked += onItemClicked
             }

@@ -43,6 +43,7 @@
                 android:text="Amount" />
 
             <EditText
+                android:hint="ETH"
                 android:id="@+id/amount_input"
                 android:layout_margin="4dp"
                 android:inputType="numberDecimal"
@@ -79,6 +80,7 @@
                 android:text="Shares" />
 
             <EditText
+                android:hint="People"
                 android:id="@+id/shares_input"
                 android:layout_margin="4dp"
                 android:digits="0123456789"
@@ -92,7 +94,6 @@
 
             <Spinner
                 android:id="@+id/sender_spinner"
-                android:layout_margin="8dp"
                 app:layout_columnWeight="1"
                 tools:listitem="@layout/item_message_contact" />
 

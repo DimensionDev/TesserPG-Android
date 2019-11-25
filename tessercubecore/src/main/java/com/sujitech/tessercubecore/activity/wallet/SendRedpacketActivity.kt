@@ -1,36 +1,23 @@
 package com.sujitech.tessercubecore.activity.wallet
 
-import android.app.ProgressDialog
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
+import androidx.activity.viewModels
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.adapter.FragmentAdapter
-import com.sujitech.tessercubecore.common.extension.applyMessageData
+import com.sujitech.tessercubecore.common.extension.task
 import com.sujitech.tessercubecore.common.extension.toast
-import com.sujitech.tessercubecore.contracts.generated.RedPacket
-import com.sujitech.tessercubecore.data.ContactData
-import com.sujitech.tessercubecore.data.DbContext
-import com.sujitech.tessercubecore.data.MessageDataEntity
 import com.sujitech.tessercubecore.fragment.wallet.ReceiverSelectFragment
 import com.sujitech.tessercubecore.fragment.wallet.RedPacketInfoFragment
-import io.requery.kotlin.eq
+import com.sujitech.tessercubecore.viewModel.wallet.SendRedPacketViewModel
 import kotlinx.android.synthetic.main.activity_send_redpacket.*
-import kotlinx.coroutines.launch
-import moe.tlaster.kotlinpgp.KotlinPGP
-import moe.tlaster.kotlinpgp.data.EncryptParameter
-import moe.tlaster.kotlinpgp.data.PublicKeyData
-import org.web3j.crypto.Hash
-import org.web3j.crypto.WalletUtils
-import org.web3j.protocol.Web3j
-import org.web3j.protocol.http.HttpService
-import org.web3j.tx.gas.DefaultGasProvider
-import org.web3j.utils.Convert
-import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class SendRedpacketActivity : BaseActivity() {
 
+    private val viewModel by viewModels<SendRedPacketViewModel>()
 
     private val infoFragment by lazy {
         RedPacketInfoFragment().apply {
@@ -63,70 +50,24 @@ class SendRedpacketActivity : BaseActivity() {
     }
 
     private fun commitRedPacket() {
-        //TODO
-        val dialog = ProgressDialog.show(this, "Sending", "Sending...")
         val data = infoFragment.getRedPacketData()
         val receivers = receiverSelectFragment.getSelectedReceiver()
-        lifecycleScope.launch {
-
-            val web3j = Web3j.build(HttpService("<TODO>"))  // TODO;
-            val walletPassword = UserPasswordStorage.get(this@SendRedpacketActivity, data.wallet.passwordId)
-            val walletMnemonic = UserPasswordStorage.get(this@SendRedpacketActivity, data.wallet.mnemonicId)
-            val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
-            val contractGasProvider = DefaultGasProvider()
-            val uuids = (0 until data.shares).map {
-                UUID.randomUUID().toString()
-            }
-
-            try {
-                val contract = RedPacket.deploy(
-                        web3j,
-                        credentials,
-                        contractGasProvider,
-                        Convert.toWei(10.toBigDecimal(), Convert.Unit.FINNEY).toBigInteger(),
-                        uuids.map {
-                            Hash.sha3String(it).removePrefix("0x").hexStringToByteArray()
-                        },
-                        true,
-                        (System.currentTimeMillis() / 1000 + 60 * 60).toBigInteger()
-                ).send()
-
-                val payload = generatePayload(contract.contractAddress, uuids)
-
-                val result = KotlinPGP.encrypt(EncryptParameter(
-                        message = payload,
-                        publicKey = receivers.map { PublicKeyData(it.pubKeyContent) } + DbContext.data.select(ContactData::class).where(ContactData::isUserKey eq true).get().map { PublicKeyData(it.pubKeyContent, true) }
-                ))
-                runOnUiThread {
-                    MessageDataEntity().also {
-                        it.applyMessageData(payload, result, null, receivers)
-                        DbContext.data.insert(it).blockingGet()
-                    }
+        val walletPassword = UserPasswordStorage.get(this, data.wallet.passwordId)
+        val walletMnemonic = UserPasswordStorage.get(this, data.wallet.mnemonicId)
+        task(Dispatchers.IO) {
+            kotlin.runCatching {
+                viewModel.commitRedPacket(data, receivers, walletPassword!!, walletMnemonic!!)
+            }.onFailure {
+                withContext(Dispatchers.Main) {
+                    toast("Error")
                 }
-            } catch (e: Throwable) {
-                e.printStackTrace()
-                runOnUiThread {
-                    //TODO
-                    toast("error")
+            }.onSuccess {
+                withContext(Dispatchers.Main) {
+                    finish()
                 }
-            }
-            runOnUiThread {
-                dialog.hide()
             }
         }
-
     }
 
-    private fun generatePayload(contractAddress: String, uuids: List<String>): String {
-        val result = "-----BEGIN RED PACKET-----" +
-                System.lineSeparator() +
-                contractAddress +
-                System.lineSeparator() +
-                uuids.joinToString { System.lineSeparator() } +
-                System.lineSeparator() +
-                "-----END RED PACKET-----" + System.lineSeparator()
-        return result
-    }
 }
 
-fun String.hexStringToByteArray() = ByteArray(this.length / 2) { this.substring(it * 2, it * 2 + 2).toInt(16).toByte() }

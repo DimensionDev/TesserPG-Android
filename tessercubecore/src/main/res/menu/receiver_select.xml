@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:title="@string/done"
         android:icon="@drawable/ic_check_black_24dp"
         android:id="@+id/menu_done"
         app:showAsAction="always"/>

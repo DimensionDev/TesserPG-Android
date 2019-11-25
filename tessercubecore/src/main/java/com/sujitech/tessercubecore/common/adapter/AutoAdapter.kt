@@ -31,9 +31,22 @@ fun <T> RecyclerView.updateItemsSource(newItems: List<T>?) {
     }
 }
 
-class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_item_1, val itemPadding: Int = 0)
+interface IItemSelector<T> {
+    fun selectLayout(item: T): Int
+}
+
+open class ItemSelector<T>(private val layoutId: Int) : IItemSelector<T> {
+    override fun selectLayout(item: T): Int {
+        return layoutId
+    }
+}
+
+open class AutoAdapter<T>(val itemSelector: IItemSelector<T>)
     : androidx.recyclerview.widget.RecyclerView.Adapter<AutoAdapter.AutoViewHolder>() {
     class AutoViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView)
+
+    constructor(@LayoutRes layoutId: Int = android.R.layout.simple_list_item_1): this(ItemSelector(layoutId))
+
     private enum class ViewType {
         Item,
         EmptyView,
@@ -82,7 +95,18 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
             }
         }
 
-        return ViewType.Item.ordinal
+        var actualPosition = position
+        if (hasHeader) {
+            actualPosition -= 1
+        }
+
+        val item = getItem(actualPosition)
+        return itemSelector.selectLayout(item!!)
+//        return ViewType.Item.ordinal
+    }
+
+    protected open fun getItem(position: Int): T? {
+        return items.getOrNull(position)
     }
 
     private val actions: ArrayList<ActionData<T>> = ArrayList()
@@ -93,11 +117,6 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AutoViewHolder {
         val type = ViewType.getByValue(viewType)
         when (type) {
-            ViewType.Item -> return AutoViewHolder(LayoutInflater.from(parent.context).inflate(layout, parent, false).apply {
-                if (itemPadding != 0) {
-                    setPadding(itemPadding, itemPadding, itemPadding, itemPadding)
-                }
-            })
             ViewType.EmptyView -> {
                 if (emptyView != 0) {
                     return AutoViewHolder(LayoutInflater.from(parent.context).inflate(emptyView, parent, false))
@@ -121,6 +140,11 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
                     return AutoViewHolder(view)
                 }
             }
+            else -> return AutoViewHolder(LayoutInflater.from(parent.context).inflate(viewType, parent, false).apply {
+                //                if (itemPadding != 0) {
+//                    setPadding(itemPadding, itemPadding, itemPadding, itemPadding)
+//                }
+            })
         }
         return AutoViewHolder(View(parent.context))
     }
@@ -161,7 +185,7 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
             onBindFooter?.invoke(viewHolder.itemView)
         }
 
-        val item = items.getOrNull(actualPosition)
+        val item = getItem(actualPosition)
         if (item != null) {
             viewHolder.itemView.setOnClickListener {
                 itemClicked.invoke(viewHolder.itemView, ItemClickEventArg(item))
@@ -171,7 +195,9 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
                 itemLongPressed.any()
             }
             actions.forEach {
-                it.action.invoke(viewHolder.itemView.findViewById(it.id), item, actualPosition, this)
+                viewHolder.itemView.findViewById<View>(it.id)?.let { view ->
+                    it.action.invoke(view, item, actualPosition, this)
+                }
             }
         }
     }

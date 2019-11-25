@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
 import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -33,8 +35,9 @@ fun Context.getClipboardText(): String {
 inline val Context.asyncScope
         get() = (this as? LifecycleOwner)?.lifecycleScope ?: GlobalScope
 
-
-fun Context.task(block: suspend CoroutineScope.() -> Unit) {
+fun Context.task(context: CoroutineContext = EmptyCoroutineContext,
+                 start: CoroutineStart = CoroutineStart.DEFAULT,
+                 block: suspend CoroutineScope.() -> Unit) {
     val progress = AlertDialog.Builder(this)
             .setView(R.layout.dialog_loading)
             .setCancelable(false).apply {
@@ -47,7 +50,7 @@ fun Context.task(block: suspend CoroutineScope.() -> Unit) {
             progress.dismiss()
         }
     }
-    asyncScope.launch {
+    asyncScope.launch(context, start) {
         withContext(Dispatchers.Default) {
             kotlin.runCatching {
                 block.invoke(this)

@@ -93,6 +93,7 @@ object MessageDataUtils {
                 }
 
                 MessageDataEntity().apply {
+                    redPacketData = parseRedPacket(decryptResult.result)
                     content = decryptResult.result
                     rawContent = pgpContent
                     composeTime = decryptResult.time
@@ -119,6 +120,7 @@ object MessageDataUtils {
                 }
             } else {
                 MessageDataEntity().apply {
+                    redPacketData = parseRedPacket(decryptResult.result)
                     content = decryptResult.result
                     rawContent = pgpContent
                     composeTime = decryptResult.time
@@ -145,5 +147,17 @@ object MessageDataUtils {
             }
         }
         return null
+    }
+
+    private fun parseRedPacket(content: String) : RedPacketData? {
+        if (!RedPacketUtils.check(content)) {
+            return null
+        }
+        val info = RedPacketUtils.parse(content)
+        return RedPacketDataEntity().apply {
+            fromMe = false
+            state = RedPacketState.notClaimed
+            shares = info.uuids.count()
+        }
     }
 }

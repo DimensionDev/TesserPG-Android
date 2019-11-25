@@ -36,7 +36,7 @@ class ImportWalletActivity : BaseActivity() {
         recycler_view.updateItemsSource((0 until 12).map { Words() })
         confirm_button.setOnClickListener {
             recycler_view.getItemsSource<Words>()?.let {
-                it.joinToString(" ")
+                it.joinToString(" ") { it.value }
             }?.takeIf {
                 MnemonicUtils.validateMnemonic(it)
             }?.let { mnemonic ->

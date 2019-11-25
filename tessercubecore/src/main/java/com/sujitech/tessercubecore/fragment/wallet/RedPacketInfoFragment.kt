@@ -94,7 +94,7 @@ class RedPacketInfoFragment : Fragment(R.layout.fragment_red_packet) {
         return RedPacketData(
                 wallet = wallet_spinner.selectedItem as WalletData,
                 amount = amount_input.text.toString().toBigDecimal(),
-                shares = shares_input.text.toString().toLong(),
+                shares = shares_input.text.toString().toInt(),
                 sender = sender_spinner.selectedItem as UserKeyData
         )
     }
@@ -103,6 +103,6 @@ class RedPacketInfoFragment : Fragment(R.layout.fragment_red_packet) {
 data class RedPacketData(
         val wallet: WalletData,
         val amount: BigDecimal,
-        val shares: Long,
+        val shares: Int,
         val sender: UserKeyData
 )
