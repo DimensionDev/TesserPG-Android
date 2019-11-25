@@ -2,6 +2,7 @@ package com.sujitech.tessercubecore.activity.wallet
 
 import android.app.ProgressDialog
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.common.UserPasswordStorage
@@ -16,7 +17,6 @@ import com.sujitech.tessercubecore.fragment.wallet.ReceiverSelectFragment
 import com.sujitech.tessercubecore.fragment.wallet.RedPacketInfoFragment
 import io.requery.kotlin.eq
 import kotlinx.android.synthetic.main.activity_send_redpacket.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import moe.tlaster.kotlinpgp.KotlinPGP
 import moe.tlaster.kotlinpgp.data.EncryptParameter
@@ -67,7 +67,7 @@ class SendRedpacketActivity : BaseActivity() {
         val dialog = ProgressDialog.show(this, "Sending", "Sending...")
         val data = infoFragment.getRedPacketData()
         val receivers = receiverSelectFragment.getSelectedReceiver()
-        GlobalScope.launch {
+        lifecycleScope.launch {
 
             val web3j = Web3j.build(HttpService("<TODO>"))  // TODO;
             val walletPassword = UserPasswordStorage.get(this@SendRedpacketActivity, data.wallet.passwordId)

@@ -4,16 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
-import com.sujitech.tessercubecore.common.extension.getClipboardText
-import com.sujitech.tessercubecore.common.extension.toActivity
-import com.sujitech.tessercubecore.common.extension.toContactData
-import com.sujitech.tessercubecore.common.extension.toast
+import com.sujitech.tessercubecore.common.extension.*
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.KeyData
 import io.requery.kotlin.eq
 import kotlinx.android.synthetic.main.activity_import_contact.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import moe.tlaster.kotlinpgp.KotlinPGP
 import moe.tlaster.kotlinpgp.isPGPPublicKey
 
@@ -47,7 +42,7 @@ class ImportContactActivity : BaseActivity() {
     private fun importContact() {
         val publicKeyText = import_text.text.toString()
         if (publicKeyText.isNotEmpty() && publicKeyText.isNotBlank()) {
-            GlobalScope.launch {
+            task {
                 kotlin.runCatching {
                     val pgpPublicKeyRing = KotlinPGP.getPublicKeyRingFromString(publicKeyText)
                     if (DbContext.data.select(KeyData::class).where(KeyData::keyId eq pgpPublicKeyRing.publicKey.keyID).get().any()) {

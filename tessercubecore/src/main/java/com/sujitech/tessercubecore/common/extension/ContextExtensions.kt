@@ -8,6 +8,8 @@ import android.content.Intent
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
 import kotlinx.coroutines.*
@@ -27,6 +29,11 @@ fun Context.getClipboardText(): String {
     return ""
 }
 
+
+inline val Context.asyncScope
+        get() = (this as? LifecycleOwner)?.lifecycleScope ?: GlobalScope
+
+
 fun Context.task(block: suspend CoroutineScope.() -> Unit) {
     val progress = AlertDialog.Builder(this)
             .setView(R.layout.dialog_loading)
@@ -40,14 +47,16 @@ fun Context.task(block: suspend CoroutineScope.() -> Unit) {
             progress.dismiss()
         }
     }
-    GlobalScope.launch {
-        kotlin.runCatching {
-            block.invoke(this)
-        }.onFailure {
-            it.printStackTrace()
-            withContext(Dispatchers.Main) {
-                it.message?.let { it1 ->
-                    Toast.makeText(this@task, it1, Toast.LENGTH_SHORT).show()
+    asyncScope.launch {
+        withContext(Dispatchers.Default) {
+            kotlin.runCatching {
+                block.invoke(this)
+            }.onFailure {
+                it.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    it.message?.let { it1 ->
+                        Toast.makeText(this@task, it1, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -62,7 +71,7 @@ fun Context.toast(content: String) {
 }
 
 suspend fun Context.inputAlert(title: String, type: Int = android.text.InputType.TYPE_CLASS_TEXT) = suspendCoroutine<String> { ct ->
-    GlobalScope.launch {
+    asyncScope.launch {
         withContext(Dispatchers.Main) {
             val editText = EditText(this@inputAlert).apply {
                 inputType = type
@@ -89,7 +98,7 @@ suspend fun Context.inputAlert(title: String, type: Int = android.text.InputType
 }
 
 suspend fun Context.alert(title: String) = suspendCoroutine<Boolean> { ct ->
-    GlobalScope.launch {
+    asyncScope.launch {
         withContext(Dispatchers.Main) {
             AlertDialog.Builder(this@alert)
                     .setMessage(title)
