@@ -42,7 +42,7 @@ class SendRedPacketViewModel : ViewModel() {
                     Hash.sha3String(it).removePrefix("0x").hexStringToByteArray()
                 },
                 true,
-                (60 * 60 * 24).toBigInteger()
+                1.toBigInteger()
         ).send()
 
         val pubkeyRing = KotlinPGP.getPublicKeyRingFromString(data.sender.contactData!!.pubKeyContent)
