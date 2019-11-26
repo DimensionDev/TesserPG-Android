@@ -36,9 +36,22 @@ class RedPacketCard : CardView {
         red_packet_sender.text = data.senderId
         red_packet_time.text = context.getString(R.string.message_composed_time, prettyTime.format(value.composeTime))
         if (redPacketData.fromMe) {
-            red_packet_state.text = "Sending ${redPacketData.price} ETH"
-            red_packet_shares.text = "Giving ${redPacketData.price} ETH / ${redPacketData.shares?.toString()} Shares"
-            red_packet_state2.text = "Ready for collection"
+            if (redPacketData.state == RedPacketState.claimed) {
+                red_packet_state.text = "Got ${Convert.fromWei(redPacketData.price, Convert.Unit.ETHER)} ETH"
+                red_packet_shares.text = "${if ((redPacketData.remainPrice ?: 0.toBigDecimal()) > 0.toBigDecimal()) {
+                    "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER)} ETH remains / "
+                } else {
+                    ""
+                } }${redPacketData.shares?.toString()} Shares"
+            } else {
+                red_packet_state.text = "Sending ${redPacketData.price} ETH"
+                red_packet_shares.text = "Giving ${redPacketData.price} ETH / ${redPacketData.shares?.toString()} Shares"
+            }
+            if (redPacketData.collectedCount != null && redPacketData.collectedCount!! > 0) {
+                red_packet_state2.text = "${redPacketData.collectedCount} / ${redPacketData.shares} collected"
+            } else {
+                red_packet_state2.text = "Ready for collection"
+            }
         } else {
             when (redPacketData.state) {
                 RedPacketState.unknown -> {
@@ -46,11 +59,19 @@ class RedPacketCard : CardView {
                 }
                 RedPacketState.notClaimed -> {
                     red_packet_state.text = "Incoming Red Packet"
-                    red_packet_shares.text = "${redPacketData.shares?.toString()} Shares"
+                    red_packet_shares.text = "${if ((redPacketData.remainPrice ?: 0.toBigDecimal()) > 0.toBigDecimal()) {
+                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER)} ETH remains / "
+                    } else {
+                        ""
+                    } }${redPacketData.shares?.toString()} Shares"
                 }
                 RedPacketState.claimed -> {
                     red_packet_state.text = "Got ${Convert.fromWei(redPacketData.price, Convert.Unit.ETHER)} ETH"
-                    red_packet_shares.text = "${redPacketData.shares?.toString()} Shares"
+                    red_packet_shares.text = "${if ((redPacketData.remainPrice ?: 0.toBigDecimal()) > 0.toBigDecimal()) {
+                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER)} ETH remains / "
+                    } else {
+                        ""
+                    } }${redPacketData.shares?.toString()} Shares"
                 }
                 RedPacketState.claimFailed -> {
                     red_packet_state.text = "Incoming Red Packet"
@@ -58,7 +79,11 @@ class RedPacketCard : CardView {
                 }
                 RedPacketState.claimLate -> {
                     red_packet_state.text = "Too late to get any"
-                    red_packet_shares.text = "${redPacketData.shares?.toString()} Shares"
+                    red_packet_shares.text = "${if ((redPacketData.remainPrice ?: 0.toBigDecimal()) > 0.toBigDecimal()) {
+                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER)} ETH remains / "
+                    } else {
+                        ""
+                    } }${redPacketData.shares?.toString()} Shares"
                 }
             }
 

@@ -5,10 +5,12 @@ import android.animation.Animator
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -16,20 +18,30 @@ import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.message.ComposeActivity
 import com.sujitech.tessercubecore.activity.message.InterpretActivity
 import com.sujitech.tessercubecore.activity.wallet.ClaimActivity
+import com.sujitech.tessercubecore.common.RedPacketUtils
 import com.sujitech.tessercubecore.common.Settings
+import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
 import com.sujitech.tessercubecore.common.adapter.IItemSelector
 import com.sujitech.tessercubecore.common.adapter.getItemsSource
 import com.sujitech.tessercubecore.common.adapter.updateItemsSource
+import com.sujitech.tessercubecore.common.createWeb3j
 import com.sujitech.tessercubecore.common.extension.shareText
 import com.sujitech.tessercubecore.common.extension.toActivity
+import com.sujitech.tessercubecore.contracts.generated.RedPacket
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.MessageData
 import com.sujitech.tessercubecore.data.RedPacketState
+import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.widget.MessageCard
 import com.sujitech.tessercubecore.widget.RedPacketCard
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_messages.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.web3j.crypto.WalletUtils
+import org.web3j.tx.gas.DefaultGasProvider
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
 class MessagesFragment : ViewPagerFragment() {
@@ -202,6 +214,10 @@ class MessagesFragment : ViewPagerFragment() {
                 }
                 itemClicked += { sender, args ->
                     if (args.item.redPacketData != null &&
+                            args.item.redPacketData?.fromMe == true &&
+                            args.item.redPacketData?.state == null) {
+                        showFromMeRedPacketPopupMenu(args.item, sender as View)
+                    } else if (args.item.redPacketData != null &&
                             args.item.redPacketData?.fromMe == false &&
                             args.item.redPacketData?.state != RedPacketState.claimed &&
                             args.item.redPacketData?.state != RedPacketState.claimLate
@@ -238,6 +254,46 @@ class MessagesFragment : ViewPagerFragment() {
             }
 
         })
+        refresh_layout.setOnRefreshListener {
+            refreshRedPacketDetail()
+        }
+    }
+
+    private fun refreshRedPacketDetail() {
+        val wallets = DbContext.data.select(WalletData::class).get().toList()
+        recycler_view.getItemsSource<MessageData>()?.let {
+            it.filter { it.redPacketData != null }
+        }?.takeIf {
+            wallets.any() && context != null
+        }?.let {
+            val web3j = createWeb3j()
+            val wallet = wallets.first()
+            val walletPassword = UserPasswordStorage.get(context!!, wallet.passwordId)
+            val walletMnemonic = UserPasswordStorage.get(context!!, wallet.mnemonicId)
+            val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
+            lifecycleScope.launch(Dispatchers.IO) {
+                for (data in it) {
+                    kotlin.runCatching {
+                        val address = RedPacketUtils.parse(data.content).contractAddress
+                        val contractGasProvider = DefaultGasProvider()
+                        val contract = RedPacket.load(address, web3j, credentials, contractGasProvider)
+                        val availabilityResult = contract.check_availability().send()
+                        data.redPacketData?.collectedCount = availabilityResult.component3().toInt()
+                        data.redPacketData?.remainPrice = availabilityResult.component1().toBigDecimal()
+                        withContext(Dispatchers.Main) {
+                            DbContext.data.update(data).blockingGet()
+                        }
+                    }.onFailure {
+                        it.printStackTrace()
+                        Log.i("message", data.content)
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    updateRecyclerViewItemsSource()
+                    refresh_layout.isRefreshing = false
+                }
+            }
+        }
     }
 
     private fun isDraftMode(): Boolean {
@@ -256,6 +312,45 @@ class MessagesFragment : ViewPagerFragment() {
                     it.name?.contains(newText) == true
                 }
             })
+        }
+    }
+
+    private fun showFromMeRedPacketPopupMenu(item: MessageData, view: View) {
+        context?.let { context ->
+            PopupMenu(context, view).apply {
+                this.gravity = Gravity.END
+                inflate(R.menu.message_from_me_red_packet)
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.menu_claim_red_packet -> {
+                            context.toActivity<ClaimActivity>(Intent().apply {
+                                putExtra("data", item)
+                            })
+                            true
+                        }
+                        R.id.menu_share_encrypted_message -> {
+                            context.shareText(item.rawContent)
+                            true
+                        }
+                        R.id.menu_copy_text -> {
+                            context.shareText(item.content)
+                            true
+                        }
+                        R.id.menu_re_compose -> {
+                            context.toActivity<ComposeActivity>(Intent().apply {
+                                putExtra("mode", ComposeActivity.Mode.ReCompose)
+                                putExtra("data", item)
+                            })
+                            true
+                        }
+                        R.id.menu_delete -> {
+                            DbContext.data.delete(item).blockingGet()
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            }.show()
         }
     }
 

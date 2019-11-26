@@ -8,6 +8,7 @@ import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
 import com.sujitech.tessercubecore.common.adapter.getItemsSource
 import com.sujitech.tessercubecore.common.adapter.updateItemsSource
+import com.sujitech.tessercubecore.common.extension.toast
 import com.sujitech.tessercubecore.data.ContactData
 import com.sujitech.tessercubecore.data.DbContext
 import kotlinx.android.synthetic.main.fragment_receiver_select.*
@@ -45,7 +46,11 @@ class ReceiverSelectFragment : Fragment(R.layout.fragment_receiver_select) {
                 }
 
                 R.id.menu_done -> {
-                    next?.invoke()
+                    if (!getSelectedReceiver().any()) {
+                        context?.toast("Please at least select one receiver")
+                    } else {
+                        next?.invoke()
+                    }
                     true
                 }
 

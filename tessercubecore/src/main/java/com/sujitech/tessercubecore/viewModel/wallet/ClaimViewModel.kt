@@ -21,7 +21,7 @@ class ClaimViewModel : ViewModel() {
             val contractGasProvider = DefaultGasProvider()
             val contract = RedPacket.load(redPacketInfo.contractAddress, web3j, credentials, contractGasProvider)
             val availabilityResult = contract.check_availability().send()
-            val uuid = redPacketInfo.uuids[redPacketInfo.uuids.count() - availabilityResult.component2().toInt()]
+            val uuid = redPacketInfo.uuids[availabilityResult.component3().toInt()]
             val transactionReceipt = contract.claim(uuid).send()
 
             for (event in contract.getFailureEvents(transactionReceipt)) {

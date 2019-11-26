@@ -130,6 +130,8 @@ interface RedPacketData : Persistable, Parcelable {
     var price: BigDecimal
     var fromMe: Boolean
     var state: RedPacketState
+    var collectedCount: Int?
+    var remainPrice: BigDecimal?
 }
 
 enum class RedPacketState {

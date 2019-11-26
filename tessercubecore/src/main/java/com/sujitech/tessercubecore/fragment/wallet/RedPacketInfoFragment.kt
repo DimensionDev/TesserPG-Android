@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.common.extension.dp
+import com.sujitech.tessercubecore.common.extension.toast
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.UserKeyData
 import com.sujitech.tessercubecore.data.WalletData
@@ -22,9 +23,7 @@ class RedPacketInfoFragment : Fragment(R.layout.fragment_red_packet) {
 
     private val userKeys by lazy {
         DbContext.data.select(UserKeyData::class).get().toList().let {
-            ArrayList(it).apply {
-                add(0, null)
-            }
+            ArrayList(it)
         }
     }
 
@@ -81,7 +80,20 @@ class RedPacketInfoFragment : Fragment(R.layout.fragment_red_packet) {
                 }
 
                 R.id.menu_next -> {
-                    next?.invoke()
+                    when {
+                        amount_input.text.isNullOrEmpty() || amount_input.text.toString().toBigDecimal() == 0.toBigDecimal() -> {
+                            context?.toast("Please input amount")
+                        }
+                        shares_input.text.isNullOrEmpty() || shares_input.text.toString().toInt() == 0 -> {
+                            context?.toast("Please input shares count")
+                        }
+                        amount_input.text.toString().toBigDecimal() < 0.001.toBigDecimal() -> {
+                            context?.toast("Amount must above 0.001 ETH")
+                        }
+                        else -> {
+                            next?.invoke()
+                        }
+                    }
                     true
                 }
 
