@@ -9,14 +9,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#f00"
+        android:background="#f53416"
         android:padding="8dp">
 
         <TextView
             android:id="@+id/red_packet_sender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/holo_orange_light"
+            android:textColor="#fed233"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sender" />
@@ -26,7 +26,7 @@
             style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/holo_orange_light"
+            android:textColor="#fed233"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/red_packet_sender"
             tools:text="State" />
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textColor="@android:color/holo_orange_light"
+            android:textColor="#fed233"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/red_packet_state"
             tools:text="Price" />
@@ -45,16 +45,15 @@
             android:id="@+id/red_packet_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/holo_orange_light"
+            android:textColor="#fed233"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/red_packet_shares"
             tools:text="Time" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/red_packet_state2"
             tools:text="State2"
-            android:textColor="@android:color/holo_orange_light"
+            android:textColor="#fed233"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="wrap_content"

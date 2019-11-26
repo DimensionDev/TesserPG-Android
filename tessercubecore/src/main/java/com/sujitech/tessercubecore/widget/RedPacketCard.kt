@@ -36,14 +36,33 @@ class RedPacketCard : CardView {
         red_packet_sender.text = data.senderId
         red_packet_time.text = context.getString(R.string.message_composed_time, prettyTime.format(value.composeTime))
         if (redPacketData.fromMe) {
-            red_packet_state.text = "Sent ${redPacketData.price} ETH"
+            red_packet_state.text = "Sending ${redPacketData.price} ETH"
+            red_packet_shares.text = "Giving ${redPacketData.price} ETH / ${redPacketData.shares?.toString()} Shares"
+            red_packet_state2.text = "Ready for collection"
         } else {
-            if (redPacketData.state == RedPacketState.claimed) {
-                red_packet_state.text = "Claimed ${Convert.fromWei(redPacketData.price, Convert.Unit.ETHER)} ETH"
-            } else {
-                red_packet_state.text = redPacketData.state?.name ?: ""
+            when (redPacketData.state) {
+                RedPacketState.unknown -> {
+
+                }
+                RedPacketState.notClaimed -> {
+                    red_packet_state.text = "Incoming Red Packet"
+                    red_packet_shares.text = "${redPacketData.shares?.toString()} Shares"
+                }
+                RedPacketState.claimed -> {
+                    red_packet_state.text = "Got ${Convert.fromWei(redPacketData.price, Convert.Unit.ETHER)} ETH"
+                    red_packet_shares.text = "${redPacketData.shares?.toString()} Shares"
+                }
+                RedPacketState.claimFailed -> {
+                    red_packet_state.text = "Incoming Red Packet"
+                    red_packet_shares.text = "Claim failed, tap to retry"
+                }
+                RedPacketState.claimLate -> {
+                    red_packet_state.text = "Too late to get any"
+                    red_packet_shares.text = "${redPacketData.shares?.toString()} Shares"
+                }
             }
+
+            red_packet_state2.text = context.getString(R.string.message_interpreted_time, prettyTime.format(value.interpretTime))
         }
-        red_packet_shares.text = "${redPacketData.shares?.toString()} Shares"
     }
 }

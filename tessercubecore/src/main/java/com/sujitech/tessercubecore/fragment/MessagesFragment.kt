@@ -203,7 +203,8 @@ class MessagesFragment : ViewPagerFragment() {
                 itemClicked += { sender, args ->
                     if (args.item.redPacketData != null &&
                             args.item.redPacketData?.fromMe == false &&
-                            args.item.redPacketData?.state != RedPacketState.claimed
+                            args.item.redPacketData?.state != RedPacketState.claimed &&
+                            args.item.redPacketData?.state != RedPacketState.claimLate
                     ) {
                         context.toActivity<ClaimActivity>(Intent().apply {
                             putExtra("data", args.item)
