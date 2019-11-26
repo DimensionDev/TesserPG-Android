@@ -5,7 +5,6 @@ import com.sujitech.tessercubecore.common.RedPacketUtils
 import com.sujitech.tessercubecore.common.createWeb3j
 import com.sujitech.tessercubecore.contracts.generated.RedPacket
 import com.sujitech.tessercubecore.data.MessageData
-import org.web3j.crypto.Hash
 import org.web3j.crypto.WalletUtils
 import org.web3j.tx.gas.DefaultGasProvider
 import java.math.BigInteger
@@ -23,7 +22,7 @@ class ClaimViewModel : ViewModel() {
             val contract = RedPacket.load(redPacketInfo.contractAddress, web3j, credentials, contractGasProvider)
             val availabilityResult = contract.check_availability().send()
             val uuid = redPacketInfo.uuids[redPacketInfo.uuids.count() - availabilityResult.component2().toInt()]
-            val transactionReceipt = contract.claim(uuid, Hash.sha3("seed".toByteArray())).send()
+            val transactionReceipt = contract.claim(uuid).send()
 
             for (event in contract.getFailureEvents(transactionReceipt)) {
                 throw ClaimFailureError()
