@@ -87,8 +87,8 @@ class RedPacketInfoFragment : Fragment(R.layout.fragment_red_packet) {
                         shares_input.text.isNullOrEmpty() || shares_input.text.toString().toInt() == 0 -> {
                             context?.toast("Please input shares count")
                         }
-                        amount_input.text.toString().toBigDecimal() < 0.001.toBigDecimal() -> {
-                            context?.toast("Amount must above 0.001 ETH")
+                        amount_input.text.toString().toBigDecimal() < 0.002.toBigDecimal() * shares_input.text.toString().toBigDecimal() -> {
+                            context?.toast("Amount must above ${0.002 * shares_input.text.toString().toDouble()} ETH")
                         }
                         else -> {
                             next?.invoke()

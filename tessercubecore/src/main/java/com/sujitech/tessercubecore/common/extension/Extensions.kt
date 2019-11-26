@@ -153,3 +153,4 @@ private fun getType(algorithm: Int, bitStrength: Int): String {
 @ExperimentalUnsignedTypes
 fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
 fun String.hexStringToByteArray() = ByteArray(this.length / 2) { this.substring(it * 2, it * 2 + 2).toInt(16).toByte() }
+fun Number.format(digits: Int) = "%.${digits}f".format(this)

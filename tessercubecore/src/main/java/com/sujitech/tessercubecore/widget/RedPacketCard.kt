@@ -7,6 +7,7 @@ import androidx.cardview.widget.CardView
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.common.RedPacketUtils
 import com.sujitech.tessercubecore.common.extension.dp
+import com.sujitech.tessercubecore.common.extension.format
 import com.sujitech.tessercubecore.common.prettyTime
 import com.sujitech.tessercubecore.data.MessageData
 import com.sujitech.tessercubecore.data.RedPacketState
@@ -37,9 +38,9 @@ class RedPacketCard : CardView {
         red_packet_time.text = context.getString(R.string.message_composed_time, prettyTime.format(value.composeTime))
         if (redPacketData.fromMe) {
             if (redPacketData.state == RedPacketState.claimed) {
-                red_packet_state.text = "Got ${Convert.fromWei(redPacketData.price, Convert.Unit.ETHER)} ETH"
+                red_packet_state.text = "Got ${Convert.fromWei(redPacketData.price, Convert.Unit.ETHER).format(4)} ETH"
                 red_packet_shares.text = "${if ((redPacketData.remainPrice ?: 0.toBigDecimal()) > 0.toBigDecimal()) {
-                    "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER)} ETH remains / "
+                    "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER).format(4)} ETH remains / "
                 } else {
                     ""
                 } }${redPacketData.shares?.toString()} Shares"
@@ -60,15 +61,15 @@ class RedPacketCard : CardView {
                 RedPacketState.notClaimed -> {
                     red_packet_state.text = "Incoming Red Packet"
                     red_packet_shares.text = "${if ((redPacketData.remainPrice ?: 0.toBigDecimal()) > 0.toBigDecimal()) {
-                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER)} ETH remains / "
+                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER).format(4)} ETH remains / "
                     } else {
                         ""
                     } }${redPacketData.shares?.toString()} Shares"
                 }
                 RedPacketState.claimed -> {
-                    red_packet_state.text = "Got ${Convert.fromWei(redPacketData.price, Convert.Unit.ETHER)} ETH"
+                    red_packet_state.text = "Got ${Convert.fromWei(redPacketData.price, Convert.Unit.ETHER).format(4)} ETH"
                     red_packet_shares.text = "${if ((redPacketData.remainPrice ?: 0.toBigDecimal()) > 0.toBigDecimal()) {
-                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER)} ETH remains / "
+                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER).format(4)} ETH remains / "
                     } else {
                         ""
                     } }${redPacketData.shares?.toString()} Shares"
@@ -80,7 +81,7 @@ class RedPacketCard : CardView {
                 RedPacketState.claimLate -> {
                     red_packet_state.text = "Too late to get any"
                     red_packet_shares.text = "${if ((redPacketData.remainPrice ?: 0.toBigDecimal()) > 0.toBigDecimal()) {
-                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER)} ETH remains / "
+                        "${Convert.fromWei(redPacketData.remainPrice, Convert.Unit.ETHER).format(4)} ETH remains / "
                     } else {
                         ""
                     } }${redPacketData.shares?.toString()} Shares"
