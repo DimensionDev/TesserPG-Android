@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import com.squareup.leakcanary.LeakCanary
 import com.sujitech.tessercubecore.activity.contact.ContactDetailActivity
+import com.sujitech.tessercubecore.activity.wallet.ClaimActivity
 import com.sujitech.tessercubecore.common.FloatingHoverUtils
 import com.sujitech.tessercubecore.common.MessageDataUtils
 import com.sujitech.tessercubecore.common.extension.getClipboardText
@@ -16,6 +17,7 @@ import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.KeyData
 import com.sujitech.tessercubecore.widget.ContactView
 import com.sujitech.tessercubecore.widget.MessageCard
+import com.sujitech.tessercubecore.widget.RedPacketCard
 import io.requery.kotlin.eq
 import moe.tlaster.floatinghover.FloatingController
 import moe.tlaster.kotlinpgp.KotlinPGP
@@ -46,6 +48,15 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
                     floating.findViewById<Button>(R.id.floating_contact_cancel_button).setOnClickListener {
                         floatingController.hide()
                     }
+                    floating.findViewById<Button>(R.id.floating_decrypt_red_packet_button).setOnClickListener {
+                        floating.findViewById<RedPacketCard>(R.id.floating_decrypt_red_packet_card).data?.let { data ->
+                            it.context.startActivity(Intent(it.context, ClaimActivity::class.java).apply {
+                                putExtra("data", DbContext.data.insert(data).blockingGet())
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            })
+                        }
+                        floatingController.hide()
+                    }
                 }
             }
         }
@@ -74,9 +85,18 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
             kotlin.runCatching {
                 val messageData = MessageDataUtils.getMessageDataFromEncryptedContent(this, text)
                 if (messageData != null) {
-                    floatingController.floatingView.findViewById<MessageCard>(R.id.floating_decrypt_message_card).also {
-                        it.visibility = View.VISIBLE
-                        it.messageData = messageData
+                    if (messageData.redPacketData != null) {
+                        floatingController.floatingView.findViewById<View>(R.id.floating_decrypt_red_packet_container).also {
+                            it.visibility = View.VISIBLE
+                            it.findViewById<RedPacketCard>(R.id.floating_decrypt_red_packet_card).data = messageData
+                        }
+                        floatingController.floatingView.findViewById<View>(R.id.floating_decrypt_message_card).visibility = View.GONE
+                    } else {
+                        floatingController.floatingView.findViewById<MessageCard>(R.id.floating_decrypt_message_card).also {
+                            it.visibility = View.VISIBLE
+                            it.messageData = messageData
+                        }
+                        floatingController.floatingView.findViewById<View>(R.id.floating_decrypt_red_packet_container).visibility = View.GONE
                     }
                     floatingController.floatingView.findViewById<View>(R.id.floating_contact_container).visibility = View.GONE
                     floatingController.show()
@@ -93,7 +113,8 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
                     it.visibility = View.VISIBLE
                     it.findViewById<ContactView>(R.id.floating_contact_view).contact = contact
                 }
-                floatingController.floatingView.findViewById<MessageCard>(R.id.floating_decrypt_message_card).visibility = View.GONE
+                floatingController.floatingView.findViewById<View>(R.id.floating_decrypt_red_packet_container).visibility = View.GONE
+                floatingController.floatingView.findViewById<View>(R.id.floating_decrypt_message_card).visibility = View.GONE
                 floatingController.show()
             }
         }

@@ -18,10 +18,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.sujitech.tessercubecore.widget.MessageCard
+            tools:visibility="gone"
             android:id="@+id/floating_decrypt_message_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <androidx.cardview.widget.CardView
+            android:id="@+id/floating_decrypt_red_packet_container"
+            app:cardCornerRadius="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.sujitech.tessercubecore.widget.RedPacketCard
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="8dp"
+                    android:id="@+id/floating_decrypt_red_packet_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/floating_decrypt_red_packet_button"
+                    android:layout_margin="4dp"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:textAllCaps="false"
+                    android:text="Click to claim"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            tools:visibility="gone"
             android:id="@+id/floating_contact_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
