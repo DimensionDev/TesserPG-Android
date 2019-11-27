@@ -28,14 +28,30 @@
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_margin="8dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="8dp"
                 android:text="Wallet" />
 
-            <Spinner
-                android:id="@+id/wallet_spinner"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_margin="8dp"
-                app:layout_columnWeight="1"
-                tools:listitem="@android:layout/simple_list_item_1" />
+                app:layout_columnWeight="1">
+                <Spinner
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:id="@+id/wallet_spinner"
+                    tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+                <ProgressBar
+                    android:id="@+id/wallet_eth_loading"
+                    android:indeterminate="true"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
+                <TextView
+                    tools:text="0 ETH"
+                    android:id="@+id/wallet_eth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Subhead"

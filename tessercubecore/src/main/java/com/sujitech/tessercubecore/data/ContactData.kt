@@ -88,6 +88,7 @@ interface WalletData : Persistable, Parcelable {
     var address: String
     var passwordId: String
     var mnemonicId: String
+    var balance: BigDecimal?
 }
 
 @Entity

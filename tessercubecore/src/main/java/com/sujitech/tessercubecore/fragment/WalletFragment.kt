@@ -7,19 +7,28 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.wallet.CreateWalletActivity
 import com.sujitech.tessercubecore.activity.wallet.ImportWalletActivity
 import com.sujitech.tessercubecore.activity.wallet.SendRedpacketActivity
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
+import com.sujitech.tessercubecore.common.adapter.getItemsSource
 import com.sujitech.tessercubecore.common.adapter.updateItemsSource
+import com.sujitech.tessercubecore.common.createWeb3j
+import com.sujitech.tessercubecore.common.extension.format
 import com.sujitech.tessercubecore.common.extension.shareText
 import com.sujitech.tessercubecore.common.extension.toActivity
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.WalletData
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_wallet.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.utils.Convert
 
 class WalletFragment : ViewPagerFragment() {
     private lateinit var addPopupMenu: PopupMenu
@@ -75,8 +84,11 @@ class WalletFragment : ViewPagerFragment() {
                     it.address
                 }
                 bindText(R.id.item_key_type) {
-                    //TODO: eth
-                    ""
+                    it.balance?.takeIf {
+                        it > 0.toBigDecimal()
+                    }?.let {
+                        Convert.fromWei(it, Convert.Unit.ETHER).format(4) + " ETH"
+                    } ?: "0 ETH"
                     //it.address
                 }
                 itemClicked += { sender, args ->
@@ -104,6 +116,27 @@ class WalletFragment : ViewPagerFragment() {
             context.toActivity<SendRedpacketActivity>()
         }
         subscribeWalletList()
+        refresh_layout.setOnRefreshListener {
+            refreshWalletBalance()
+        }
+    }
+
+    private fun refreshWalletBalance() {
+        recycler_view.getItemsSource<WalletData>()?.let {
+            val web3j = createWeb3j()
+            lifecycleScope.launch(Dispatchers.IO) {
+                for (wallet in it.toList()) {
+                    val balance = web3j.ethGetBalance(wallet.address, DefaultBlockParameterName.LATEST).send()
+                    wallet.balance = balance.balance.toBigDecimal()
+                    withContext(Dispatchers.Main) {
+                        DbContext.data.update(wallet).blockingGet()
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    refresh_layout.isRefreshing = false
+                }
+            }
+        }
     }
 
     private fun deleteWallet(item: WalletData) {

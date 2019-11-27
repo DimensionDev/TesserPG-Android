@@ -10,7 +10,7 @@ import io.requery.sql.KotlinEntityDataStore
 object DbContext {
 
     val data: KotlinReactiveEntityStore<Persistable> by lazy {
-        val source = DatabaseSource(appContext, Models.DEFAULT, 4)
+        val source = DatabaseSource(appContext, Models.DEFAULT, 5)
         KotlinReactiveEntityStore<Persistable>(KotlinEntityDataStore(source.configuration))
     }
 }
