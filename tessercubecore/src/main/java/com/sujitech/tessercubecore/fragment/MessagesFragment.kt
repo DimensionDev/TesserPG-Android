@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
@@ -322,6 +323,14 @@ class MessagesFragment : ViewPagerFragment() {
                 inflate(R.menu.message_from_me_red_packet)
                 setOnMenuItemClickListener {
                     when (it.itemId) {
+                        R.id.menu_refund_red_packet -> {
+                            AlertDialog.Builder(context)
+                                    .setMessage("Please Refund After Red Packet Expired")
+                                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                                    }
+                                    .show()
+                            true
+                        }
                         R.id.menu_claim_red_packet -> {
                             context.toActivity<ClaimActivity>(Intent().apply {
                                 putExtra("data", item)

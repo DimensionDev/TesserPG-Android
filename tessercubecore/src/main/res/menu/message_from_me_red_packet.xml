@@ -6,6 +6,10 @@
         android:title="Claim"
         />
     <item
+        android:id="@+id/menu_refund_red_packet"
+        android:title="Refund"
+        />
+    <item
         android:id="@+id/menu_share_encrypted_message"
         android:title="@string/share_encrypted_message"
         />
