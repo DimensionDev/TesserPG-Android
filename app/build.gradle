@@ -9,8 +9,8 @@ android {
         applicationId app_id
         minSdkVersion min_version	
         targetSdkVersion target_version	
-        versionCode 311
-        versionName '0.4.1'
+        versionCode version_code
+        versionName version_name
     }
 
     signingConfigs {
@@ -47,6 +47,17 @@ android {
     lintOptions {	
         abortOnError false	
         checkReleaseBuilds false
+    }
+
+
+    flavorDimensions("version")
+    productFlavors {
+        redpacket {
+            versionName version_name + "-redpacket"
+        }
+        normal {
+            versionName version_name
+        }
     }
 
     defaultConfig {

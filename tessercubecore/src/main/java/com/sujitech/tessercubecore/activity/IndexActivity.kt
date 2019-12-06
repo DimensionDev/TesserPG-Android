@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
 import androidx.viewpager.widget.ViewPager
+import com.sujitech.tessercubecore.BuildConfig
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.common.FloatingHoverUtils
 import com.sujitech.tessercubecore.common.IMEUtils
@@ -21,10 +22,14 @@ import kotlinx.android.synthetic.main.activity_index.*
 class IndexActivity : BaseActivity() {
 
     private val fragments by lazy {
-        listOf(
+        listOfNotNull(
                 ContactsFragment(),
                 MessagesFragment(),
-                WalletFragment(),
+                if (BuildConfig.RED_PACKET_ENABLED) {
+                    WalletFragment()
+                } else {
+                    null
+                },
                 MeFragment()
         )
     }

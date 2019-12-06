@@ -85,7 +85,7 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
             kotlin.runCatching {
                 val messageData = MessageDataUtils.getMessageDataFromEncryptedContent(this, text)
                 if (messageData != null) {
-                    if (messageData.redPacketData != null) {
+                    if (messageData.redPacketData != null && BuildConfig.RED_PACKET_ENABLED) {
                         floatingController.floatingView.findViewById<View>(R.id.floating_decrypt_red_packet_container).also {
                             it.visibility = View.VISIBLE
                             it.findViewById<RedPacketCard>(R.id.floating_decrypt_red_packet_card).data = messageData
