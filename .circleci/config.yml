@@ -14,8 +14,11 @@ jobs:
       - run: chmod +x ./gradlew
       - run: ./gradlew assembleRelease -PversionCode=$((CIRCLE_BUILD_NUM + 177)) -PappCenterEnabled=false -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
       - store_artifacts:
-          path: ./app/build/outputs/apk/release/app-release.apk
+          path: ./app/build/outputs/apk/normal/release/app-normal-release.apk
           destination: /app-release.apk
+      - store_artifacts:
+          path: ./app/build/outputs/apk/redpacket/release/app-redpacket-release.apk
+          destination: /app-redpacket-release.apk
   deploy-build:
     docker:
       - image: circleci/android:api-28-ndk
@@ -32,9 +35,13 @@ jobs:
       - run: chmod +x ./gradlew
       - run: ./gradlew assembleRelease -PversionCode=$((CIRCLE_BUILD_NUM + 177)) -PversionName="${CIRCLE_TAG}" -PappCenterEnabled=false -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
       - store_artifacts:
-          path: ./app/build/outputs/apk/release/app-release.apk
+          path: ./app/build/outputs/apk/normal/release/app-normal-release.apk
+          destination: /app-release.apk
+      - store_artifacts:
+          path: ./app/build/outputs/apk/redpacket/release/app-redpacket-release.apk
+          destination: /app-redpacket-release.apk
       - persist_to_workspace:
-          root: app/build/outputs/apk/release/
+          root: ./
           paths:
             - app-release.apk
   publish-github-release:
@@ -42,7 +49,7 @@ jobs:
       - image: cibuilds/github:0.10
     steps:
       - attach_workspace:
-          at: /app/build/outputs/apk/release/
+          at: ./
       - run:
           name: "Publish Release on GitHub"
           command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} /app/build/outputs/apk/release/app-release.apk
