@@ -35,6 +35,7 @@ subprojects {
                 id : project.hasProperty('appCenterId') ? appCenterId : ''
             ]
             signConfig = [
+                withSign: project.hasProperty('signKeyStore'),
                 keyStore : project.hasProperty('signKeyStore') ? signKeyStore : './key.jks',
                 keyStorePassword : project.hasProperty('signKeyStorePassword') ? signKeyStorePassword : 'password',
                 keyAlias : project.hasProperty('signKeyAlias') ? signKeyAlias : 'alias',
