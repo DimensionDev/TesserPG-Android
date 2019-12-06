@@ -3,7 +3,7 @@ apply plugin: 'org.web3j'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.web3j:core:4.2.0-android"
+    api "org.web3j:core:4.2.0-android"
 }
 
 web3j {
