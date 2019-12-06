@@ -115,6 +115,7 @@ class WalletFragment : ViewPagerFragment() {
         create_redpacket_button.setOnClickListener {
             context.toActivity<SendRedpacketActivity>()
         }
+
         subscribeWalletList()
         refresh_layout.setOnRefreshListener {
             refreshWalletBalance()
@@ -150,6 +151,7 @@ class WalletFragment : ViewPagerFragment() {
         this.walletSubscribe = DbContext.data.select(WalletData::class).get().observableResult().subscribe {
             recycler_view.updateItemsSource(it.toList())
             empty_key_container.isVisible = !it.any()
+            create_redpacket_button.isVisible = it.any()
         }
     }
 
