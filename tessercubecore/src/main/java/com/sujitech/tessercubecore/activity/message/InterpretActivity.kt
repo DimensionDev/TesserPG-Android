@@ -105,9 +105,7 @@ class InterpretActivity : BaseActivity() {
                 val messageData = MessageDataUtils.getMessageDataFromEncryptedContent(this@InterpretActivity, pgpContent)
                 if (messageData != null) {
                     runOnUiThread {
-                        if (allowDuplicate) {
-                            DbContext.data.insert(messageData).blockingGet()
-                        }
+                        DbContext.data.insert(messageData).blockingGet()
                         callback?.invoke(messageData)
                         finish()
                     }
