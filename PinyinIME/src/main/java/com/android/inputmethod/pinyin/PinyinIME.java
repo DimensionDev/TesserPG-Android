@@ -1271,9 +1271,13 @@ public class PinyinIME extends InputMethodServiceProxy {
             mCandidatesContainer.getLocationInWindow(mParentLocation);
 
             if (!mFloatingWindow.isShowing()) {
-                mFloatingWindow.showAtLocation(mCandidatesContainer,
-                        Gravity.LEFT | Gravity.TOP, mParentLocation[0],
-                        mParentLocation[1] -mFloatingWindow.getHeight());
+                try {
+                    mFloatingWindow.showAtLocation(mCandidatesContainer,
+                            Gravity.LEFT | Gravity.TOP, mParentLocation[0],
+                            mParentLocation[1] -mFloatingWindow.getHeight());
+                } catch (WindowManager.BadTokenException e) {
+                    Log.e(TAG, "Fail to show the PopupWindow(mFloatingWindow).");
+                }
             } else {
                 mFloatingWindow
                 .update(mParentLocation[0],
