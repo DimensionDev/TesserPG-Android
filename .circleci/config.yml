@@ -15,7 +15,7 @@ jobs:
           destination: /app-release.apk
       - run: ./gradlew bundleRelease -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
       - store_artifacts:
-          path: ./app/build/outputs/bundle/release/app-release.apk
+          path: ./app/build/outputs/bundle/release/app-release.aab
           destination: /app-release.aab
   deploy-build:
     docker:
@@ -33,7 +33,7 @@ jobs:
           path: ./app/build/outputs/apk/release/app-release.apk
       - run: ./gradlew bundleRelease -PsignKeyStore="${HOME}/keystore.jks" -PsignKeyStorePassword=${SIGN_KEY_STORE_PASSWORD} -PsignKeyAlias=${SIGN_KEY_KEY_ALIAS} -PsignKeyPassword=${SIGN_KEY_KEY_PASSWORD}
       - store_artifacts:
-          path: ./app/build/outputs/bundle/release/app-release.apk
+          path: ./app/build/outputs/bundle/release/app-release.aab
           destination: /app-release.aab
       - persist_to_workspace:
           root: app/build/outputs/apk/release/
