@@ -7,12 +7,10 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionManager
 import com.sujitech.tessercubecore.R
@@ -148,7 +146,7 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
         viewPager.setCurrentItem(index, false)
     }
 
-    private lateinit var listener: Listener
+    private var listener: Listener? = null
 
     private val ic by lazy {
         encrypt_view_input.onCreateInputConnection(EditorInfo())
@@ -166,7 +164,7 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
     private val onItemClicked: (Any, AutoAdapter.ItemClickEventArg<ContactData>) -> Unit = { sender, args ->
-        listener.onItemSelected(args.item)
+        listener?.onItemSelected(args.item)
         updateContact()
     }
 
@@ -208,18 +206,6 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
             }
         })
         updateContact()
-//        encrypt_view_encrypt_button.setOnClickListener {
-//            val text = listener.requireAllText()
-//            val base64 = Base64.encodeToString(text.toByteArray(Charset.defaultCharset()), Base64.DEFAULT)
-//            listener.overrideAllText(base64)
-//        }
-//        encrypt_view_decrypt_button.setOnClickListener {
-//            val text = listener.requireAllText()
-//            val dec = Base64.decode(text, Base64.DEFAULT)?.toString(Charset.defaultCharset())
-//            if (dec != null) {
-//                listener.overrideAllText(dec)
-//            }
-//        }
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
@@ -236,13 +222,13 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
     private fun updateContact() {
         data = DbContext.data.select(ContactData::class).get().toList()
         encrypt_view_list.updateItemsSource(data.filter {
-            ::listener.isInitialized && !listener.getCurrentItems().contains(it)
+            listener == null || listener?.getCurrentItems()?.contains(it) != true
         })
     }
 
     private fun searchContract(name: String) {
         encrypt_view_list.updateItemsSource(data.filter {
-            it.name.contains(name) && !listener.getCurrentItems().contains(it)
+            it.name.contains(name) && (listener == null || listener?.getCurrentItems()?.contains(it) != true)
         })
     }
 
@@ -260,10 +246,6 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
     }
 
     fun toggle() {
-//        val parentView = parent
-//        if (parentView is ViewGroup) {
-//            TransitionManager.beginDelayedTransition(parentView)
-//        }
         visibility = if (visibility == GONE) {
             VISIBLE
         } else {
@@ -271,9 +253,3 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
         }
     }
 }
-
-//data class ContractData (
-//        val name: String,
-//        val email: String,
-//        val hash: String
-//)
