@@ -21,7 +21,7 @@ fun Context.getClipboardText(): String {
         val primaryClip = clipboardManager.primaryClip
         if (primaryClip != null && primaryClip.itemCount > 0) {
             val firstItem = primaryClip.getItemAt(0)
-            return firstItem.text.toString()
+            return firstItem?.text?.toString() ?: ""
         }
     }
     return ""
