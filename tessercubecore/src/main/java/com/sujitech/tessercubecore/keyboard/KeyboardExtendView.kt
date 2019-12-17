@@ -84,7 +84,7 @@ class KeyboardExtendView : FrameLayout, IKeyboardExtendViewHost, IKeyboardNavHos
     }
 
     override fun <T : View> navigate(clazz: Class<T>, args: Any?) {
-        listener.finishInput()
+        finishInput()
         encrypt_child_container.getChildAt(0)?.let {
             backStack.push(it)
         }
@@ -100,7 +100,7 @@ class KeyboardExtendView : FrameLayout, IKeyboardExtendViewHost, IKeyboardNavHos
     }
 
     override fun goBack() {
-        listener.finishInput()
+        finishInput()
         encrypt_child_container.getChildAt(0)?.let {
             it as? IKeyboardExtendViewChild
         }?.onRemove()
@@ -117,6 +117,10 @@ class KeyboardExtendView : FrameLayout, IKeyboardExtendViewHost, IKeyboardNavHos
         } else {
             backStack.remove(view)
         }
+    }
+
+    override fun finishInput() {
+        listener.finishInput()
     }
 
     override fun actualInputConnection(): InputConnection {

@@ -20,6 +20,7 @@ interface IKeyboardExtendViewHost {
     fun hideKeyboard()
     fun actualInputConnection(): InputConnection
     fun hideExtend()
+    fun finishInput()
 }
 
 interface IKeyboardExtendViewChild {
