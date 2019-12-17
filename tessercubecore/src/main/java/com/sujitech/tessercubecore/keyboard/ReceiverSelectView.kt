@@ -7,6 +7,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Observer
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
 import com.sujitech.tessercubecore.common.adapter.getItemsSource
@@ -17,7 +18,7 @@ import com.sujitech.tessercubecore.data.DbContext
 import kotlinx.android.synthetic.main.keyboard_receiver_select.view.*
 import kotlin.math.max
 
-class ReceiverSelectView : KeyboardExtendChildView, View.OnFocusChangeListener {
+class ReceiverSelectView : KeyboardExtendChildView, View.OnFocusChangeListener, Observer<AutoAdapter.ItemClickEventArg<ContactData>> {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
@@ -26,11 +27,6 @@ class ReceiverSelectView : KeyboardExtendChildView, View.OnFocusChangeListener {
     override val layout: Int
         get() = R.layout.keyboard_receiver_select
 
-    private val onItemClicked: (Any, AutoAdapter.ItemClickEventArg<ContactData>) -> Unit = { sender, args ->
-        encrypt_toolbar_list.getItemsSource<ContactData>()?.add(args.item)
-        search_input.setText("")
-        updateContact()
-    }
     private var data = listOf<ContactData>()
     private val builder by lazy {
         arguments
@@ -67,7 +63,7 @@ class ReceiverSelectView : KeyboardExtendChildView, View.OnFocusChangeListener {
                     val fingerPrint = it.keyData.firstOrNull()?.fingerPrint
                     fingerPrint?.substring(max(fingerPrint.length - 8, 0)) ?: ""
                 }
-                itemClicked += onItemClicked
+                itemClicked.observeForever(this@ReceiverSelectView)
             }
         }
         encrypt_toolbar_list.apply {
@@ -128,5 +124,11 @@ class ReceiverSelectView : KeyboardExtendChildView, View.OnFocusChangeListener {
 
     override fun getInputConnection(): InputConnection? {
         return ic
+    }
+
+    override fun onChanged(args: AutoAdapter.ItemClickEventArg<ContactData>) {
+        encrypt_toolbar_list.getItemsSource<ContactData>()?.add(args.item)
+        search_input.setText("")
+        updateContact()
     }
 }
