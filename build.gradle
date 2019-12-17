@@ -41,7 +41,7 @@ subprojects {
                 appCenter : "1.11.4",
                 requery : "1.5.1",
                 glide : "4.10.0",
-                leakcanary : "1.6.3",
+                leakcanary : "2.0",
                 bouncycastle : '1.62'
             ]
         }

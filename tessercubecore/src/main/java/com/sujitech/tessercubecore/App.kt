@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.Button
-import com.squareup.leakcanary.LeakCanary
 import com.sujitech.tessercubecore.activity.contact.ContactDetailActivity
 import com.sujitech.tessercubecore.common.FloatingHoverUtils
 import com.sujitech.tessercubecore.common.MessageDataUtils
@@ -54,11 +53,6 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
-
-        if (!LeakCanary.isInAnalyzerProcess(this)) {
-            LeakCanary.install(this)
-        }
-
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         clipboardManager.addPrimaryClipChangedListener(this)
         KotlinPGP.header += "Comment" to "Encrypted with https://tessercube.com/"
