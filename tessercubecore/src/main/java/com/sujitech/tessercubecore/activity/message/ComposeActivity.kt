@@ -17,7 +17,6 @@ import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.extension.*
 import com.sujitech.tessercubecore.data.*
 import kotlinx.android.synthetic.main.activity_compose.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import moe.tlaster.kotlinpgp.KotlinPGP
 import moe.tlaster.kotlinpgp.data.EncryptParameter
@@ -130,7 +129,7 @@ class ComposeActivity : BaseActivity() {
                     return if (compose_to_input.selectedChips.any() ||
                             (compose_from_spinner.selectedItem as? UserKeyData)?.contactData != null ||
                             compose_content.text.isNotEmpty()) {
-                        GlobalScope.launch {
+                        asyncScope.launch {
                             val saveDraft = alert(getString(R.string.compose_save_draft))
                             if (saveDraft) {
                                 saveMessageDraft()
