@@ -1,4 +1,4 @@
-package moe.tlaster.weipo.common.collection
+package com.sujitech.tessercubecore.common.collection
 
 import kotlinx.coroutines.CoroutineScope
 

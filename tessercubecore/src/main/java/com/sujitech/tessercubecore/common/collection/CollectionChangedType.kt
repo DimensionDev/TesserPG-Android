@@ -1,4 +1,4 @@
-package moe.tlaster.weipo.common.collection
+package com.sujitech.tessercubecore.common.collection
 
 enum class CollectionChangedType {
     Add,
