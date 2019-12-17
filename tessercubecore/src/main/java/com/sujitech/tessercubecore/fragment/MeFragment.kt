@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.SettingsActivity
@@ -103,8 +104,8 @@ class MeFragment : ViewPagerFragment() {
                 bindText(R.id.item_key_type) {
                     it.type
                 }
-                itemClicked += { sender, args ->
-                    PopupMenu(context, sender as View).apply {
+                itemClicked.observe(viewLifecycleOwner, Observer { args ->
+                    PopupMenu(context, args.view).apply {
                         this.gravity = Gravity.END
                         inflate(R.menu.me_user_key_recycler_view)
                         setOnMenuItemClickListener {
@@ -129,7 +130,7 @@ class MeFragment : ViewPagerFragment() {
                             }
                         }
                     }.show()
-                }
+                })
             }
         }
         userKeySubscription = DbContext.data.select(UserKeyData::class).get().observableResult().subscribe {

@@ -9,6 +9,7 @@ import android.view.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -177,17 +178,17 @@ class MessagesFragment : ViewPagerFragment() {
                 bindCustom<MessageCard>(R.id.item_message_card_root) { messageCard, messageData, _, _ ->
                     messageCard.messageData = messageData
                 }
-                itemClicked += { sender, args ->
+                itemClicked.observe(viewLifecycleOwner, Observer { args ->
                     if (args.item.fromMe) {
                         if (args.item.isDraft) {
-                            showDraftPopupMenu(args.item, sender as View)
+                            showDraftPopupMenu(args.item, args.view)
                         } else {
-                            showFromMePopupMenu(args.item, sender as View)
+                            showFromMePopupMenu(args.item, args.view)
                         }
                     } else {
-                        showFromOthersPopupMenu(args.item, sender as View)
+                        showFromOthersPopupMenu(args.item, args.view)
                     }
-                }
+                })
                 whenEmpty(R.layout.empty_message)
             }
         }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.contact.ContactDetailActivity
@@ -98,11 +99,11 @@ class ContactsFragment : ViewPagerFragment() {
                 bindText(android.R.id.text1) {
                     it.name
                 }
-                itemClicked += { sender, args ->
+                itemClicked.observe(viewLifecycleOwner, Observer {
                     context.toActivity<ContactDetailActivity>(Intent().apply {
-                        putExtra("data", args.item)
+                        putExtra("data", it.item)
                     })
-                }
+                })
                 whenEmpty(R.layout.item_contact_empty)
             }
         }

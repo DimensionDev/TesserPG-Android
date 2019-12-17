@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionManager
 import com.sujitech.tessercubecore.R
@@ -35,7 +36,7 @@ import moe.tlaster.kotlinpgp.data.VerifyStatus
 import moe.tlaster.kotlinpgp.isPGPMessage
 import kotlin.math.max
 
-class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
+class KeyboardExtendView : FrameLayout, ToolbarActionsListener, Observer<AutoAdapter.ItemClickEventArg<ContactData>> {
     override suspend fun requestInterpret() {
         post {
 //            TransitionManager.beginDelayedTransition(this)
@@ -163,11 +164,6 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
-    private val onItemClicked: (Any, AutoAdapter.ItemClickEventArg<ContactData>) -> Unit = { sender, args ->
-        listener?.onItemSelected(args.item)
-        updateContact()
-    }
-
     private var data = listOf<ContactData>()
 
     init {
@@ -191,7 +187,7 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
                     val fingerPrint = it.keyData.firstOrNull()?.fingerPrint
                     fingerPrint?.substring(max(fingerPrint.length - 8, 0)) ?: ""
                 }
-                itemClicked += onItemClicked
+                itemClicked.observeForever(this@KeyboardExtendView)
             }
         }
         encrypt_view_input.addTextChangedListener(object : TextWatcher {
@@ -251,5 +247,10 @@ class KeyboardExtendView : FrameLayout, ToolbarActionsListener {
         } else {
             GONE
         }
+    }
+
+    override fun onChanged(args: AutoAdapter.ItemClickEventArg<ContactData>) {
+        listener?.onItemSelected(args.item)
+        updateContact()
     }
 }

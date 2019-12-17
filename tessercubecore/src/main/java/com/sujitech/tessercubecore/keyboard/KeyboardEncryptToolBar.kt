@@ -5,13 +5,14 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
 import com.sujitech.tessercubecore.R
-import com.sujitech.tessercubecore.common.ObservableCollection
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
 import com.sujitech.tessercubecore.common.adapter.getItemsSource
+import com.sujitech.tessercubecore.common.collection.CollectionChangedEventArg
 import com.sujitech.tessercubecore.common.extension.toast
 import com.sujitech.tessercubecore.data.ContactData
 import kotlinx.android.synthetic.main.widget_keyboard_encrypt_toolbar.view.*
@@ -26,7 +27,7 @@ interface ToolbarActionsListener {
     suspend fun requestEncrypt(content: String, pubKeys: List<ContactData>): String
 }
 
-class KeyboardEncryptToolBar : RelativeLayout, KeyboardExtendView.Listener {
+class KeyboardEncryptToolBar : RelativeLayout, KeyboardExtendView.Listener, Observer<CollectionChangedEventArg> {
     override fun getCurrentItems(): List<ContactData> {
         return encrypt_toolbar_list.getItemsSource() ?: emptyList()
     }
@@ -48,25 +49,6 @@ class KeyboardEncryptToolBar : RelativeLayout, KeyboardExtendView.Listener {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
-
-    private val onListItemsChanged: (Any, ObservableCollection.CollectionChangedEventArg) -> Unit = { sender, args ->
-        val itemCount = encrypt_toolbar_list.getItemsSource<ContactData>()?.size
-        if (itemCount != null && itemCount > 0) {
-            if (!encrypt_toolbar_list.isVisible) {
-                TransitionManager.beginDelayedTransition(action_container)
-                encrypt_toolbar_list.isVisible = true
-                encrypt_toolbar_interpret.hideText()
-                encrypt_toolbar_encrypt.hideText()
-            }
-        } else {
-            if (encrypt_toolbar_list.isVisible) {
-                TransitionManager.beginDelayedTransition(action_container)
-                encrypt_toolbar_list.isVisible = false
-                encrypt_toolbar_interpret.showText()
-                encrypt_toolbar_encrypt.showText()
-            }
-        }
-    }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.widget_keyboard_encrypt_toolbar, this)
@@ -120,7 +102,7 @@ class KeyboardEncryptToolBar : RelativeLayout, KeyboardExtendView.Listener {
                 bindText(android.R.id.text1) {
                     it.name
                 }
-                items.collectionChanged += this@KeyboardEncryptToolBar.onListItemsChanged
+                items.collectionChanged.observeForever(this@KeyboardEncryptToolBar)
             }
         }
     }
@@ -152,5 +134,24 @@ class KeyboardEncryptToolBar : RelativeLayout, KeyboardExtendView.Listener {
 
     fun clearSelection() {
         encrypt_toolbar_list.getItemsSource<ContactData>()?.clear()
+    }
+
+    override fun onChanged(t: CollectionChangedEventArg) {
+        val itemCount = encrypt_toolbar_list.getItemsSource<ContactData>()?.size
+        if (itemCount != null && itemCount > 0) {
+            if (!encrypt_toolbar_list.isVisible) {
+                TransitionManager.beginDelayedTransition(action_container)
+                encrypt_toolbar_list.isVisible = true
+                encrypt_toolbar_interpret.hideText()
+                encrypt_toolbar_encrypt.hideText()
+            }
+        } else {
+            if (encrypt_toolbar_list.isVisible) {
+                TransitionManager.beginDelayedTransition(action_container)
+                encrypt_toolbar_list.isVisible = false
+                encrypt_toolbar_interpret.showText()
+                encrypt_toolbar_encrypt.showText()
+            }
+        }
     }
 }

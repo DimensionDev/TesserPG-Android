@@ -7,9 +7,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import com.sujitech.tessercubecore.common.Event
-import com.sujitech.tessercubecore.common.ObservableCollection
+import com.sujitech.tessercubecore.common.collection.CollectionChangedEventArg
+import com.sujitech.tessercubecore.common.collection.CollectionChangedType
+import com.sujitech.tessercubecore.common.collection.ObservableCollection
 import com.sujitech.tessercubecore.common.extension.load
 
 
@@ -32,7 +35,7 @@ fun <T> RecyclerView.updateItemsSource(newItems: Collection<T>?) {
 }
 
 class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_item_1, val itemPadding: Int = 0)
-    : androidx.recyclerview.widget.RecyclerView.Adapter<AutoAdapter.AutoViewHolder>() {
+    : androidx.recyclerview.widget.RecyclerView.Adapter<AutoAdapter.AutoViewHolder>(), Observer<CollectionChangedEventArg> {
     class AutoViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView)
     private enum class ViewType {
         Item,
@@ -47,7 +50,8 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
     }
 
     data class ItemClickEventArg<T>(
-            val item: T
+            val item: T,
+            val view: View
     )
 
     data class ActionData<T>(
@@ -55,14 +59,18 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
             val action: (View, T, position: Int, AutoAdapter<T>) -> Unit
     )
 
-    private val onItemsChanged: (Any, ObservableCollection.CollectionChangedEventArg) -> Unit = { _, _ ->
+    private val onItemsChanged: (Any, CollectionChangedEventArg) -> Unit = { _, _ ->
         notifyDataSetChanged()
     }
 
     val items = ObservableCollection<T>().apply {
-        collectionChanged += onItemsChanged
+        collectionChanged.observeForever(this@AutoAdapter)
     }
 
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        items.collectionChanged.removeObserver(this)
+    }
     override fun getItemViewType(position: Int): Int {
         if (items.count() == 0 && emptyView != 0) {
             return ViewType.EmptyView.ordinal
@@ -87,8 +95,8 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
 
     private val actions: ArrayList<ActionData<T>> = ArrayList()
 
-    var itemClicked: Event<ItemClickEventArg<T>> = Event()
-    var itemLongPressed: Event<ItemClickEventArg<T>> = Event()
+    var itemClicked: MutableLiveData<ItemClickEventArg<T>> = MutableLiveData()
+    var itemLongPressed: MutableLiveData<ItemClickEventArg<T>> = MutableLiveData()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AutoViewHolder {
         val type = ViewType.getByValue(viewType)
@@ -164,11 +172,11 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
         val item = items.getOrNull(actualPosition)
         if (item != null) {
             viewHolder.itemView.setOnClickListener {
-                itemClicked.invoke(viewHolder.itemView, ItemClickEventArg(item))
+                itemClicked.value = ItemClickEventArg(item, it)
             }
             viewHolder.itemView.setOnLongClickListener {
-                itemLongPressed.invoke(viewHolder.itemView, ItemClickEventArg(item))
-                itemLongPressed.any()
+                itemLongPressed.value = ItemClickEventArg(item, it)
+                itemLongPressed.hasObservers()
             }
             actions.forEach {
                 it.action.invoke(viewHolder.itemView.findViewById(it.id), item, actualPosition, this)
@@ -257,6 +265,15 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
                 view.text = value.invoke(item)
             }
         })
+    }
+
+    override fun onChanged(args: CollectionChangedEventArg) {
+        when (args.type) {
+            CollectionChangedType.Add -> notifyItemRangeInserted(args.index, args.count)
+            CollectionChangedType.Remove -> notifyItemRangeRemoved(args.index, args.count)
+            CollectionChangedType.Update -> notifyItemRangeChanged(args.index, args.count)
+            CollectionChangedType.Reset -> notifyDataSetChanged()
+        }
     }
 
 }
