@@ -130,9 +130,4 @@ class KeyboardExtendView : FrameLayout, IKeyboardExtendViewHost, IKeyboardNavHos
     fun toggle() {
         isVisible = !isVisible
     }
-
-    override fun onChanged(args: AutoAdapter.ItemClickEventArg<ContactData>) {
-        listener?.onItemSelected(args.item)
-        updateContact()
-    }
 }
