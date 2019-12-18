@@ -11,6 +11,7 @@ import org.bouncycastle.openpgp.PGPPublicKey
 import org.bouncycastle.openpgp.PGPPublicKeyRing
 import org.bouncycastle.openpgp.PGPSecretKeyRing
 import org.bouncycastle.util.encoders.Hex
+import org.web3j.utils.Convert
 import java.util.*
 
 
@@ -152,3 +153,7 @@ private fun getType(algorithm: Int, bitStrength: Int): String {
 
 @ExperimentalUnsignedTypes
 fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
+
+fun Number.formatWei(digits: Int = 4) = Convert.fromWei(this.toString(), Convert.Unit.ETHER)
+
+fun Number.format(digits: Int = 4) = "%.${digits}f".format(this)

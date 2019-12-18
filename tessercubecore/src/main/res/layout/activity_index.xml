@@ -21,6 +21,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        app:layout_insetEdge="bottom"
         android:layout_height="wrap_content"
         app:menu="@menu/index_bottom"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

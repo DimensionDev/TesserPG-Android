@@ -13,7 +13,16 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".activity.SettingsActivity"></activity>
+        <activity android:name=".activity.wallet.MnemonicCodeConfirmActivity" />
+        <activity android:name=".activity.wallet.MnemonicCodeBackupActivity" />
+        <activity android:name=".activity.wallet.ImportWalletActivity" />
+        <activity
+            android:name=".activity.wallet.SendRedpacketActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.wallet.CreateWalletActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".activity.SettingsActivity" />
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -23,7 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.TutorialActivity"></activity>
+        <activity android:name=".activity.TutorialActivity" />
 
         <service
             android:name=".service.DummyAccountService"

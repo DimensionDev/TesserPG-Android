@@ -136,3 +136,49 @@ interface WalletData : Persistable, Parcelable {
     var mnemonicId: String
     var balance: BigDecimal?
 }
+
+@Entity
+interface RedPacketData : Persistable, Parcelable {
+    @get:Key
+    @get:Generated
+    val dataId: Int
+
+    var aesVersion: Int
+    var contractVersion: Int
+    var contractAddress: String
+    var uuids: List<String>
+    var isRandom: Boolean
+    var createNonce: Int?
+    var creationTransactionHash: String?
+    var blockCreationTime: Long?
+    var duration: Long
+    var redPacketId: String?
+    var rawPayload: String?
+    var encPayload: String?
+    var senderAddress: String
+    var senderName: String
+    var sendTotal: BigDecimal
+    var sendMessage: String
+    var lastSharedTime: Date?
+    var claimAddress: String?
+    var claimTransactionHash: String?
+    var claimAmount: BigDecimal?
+    var refundTransactionHash: String?
+    var refundAmount: BigDecimal?
+    var status: RedPacketStatus
+
+}
+
+enum class RedPacketStatus {
+    initial,
+    pending,
+    fail,
+    normal,
+    incoming,
+    claimPending,
+    claimed,
+    expired,
+    empty,
+    refundPending,
+    refunded
+}
