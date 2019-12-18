@@ -60,7 +60,7 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
             val action: (View, T, position: Int, AutoAdapter<T>) -> Unit
     )
 
-    var items: List<T> = ObservableCollection<T>().apply {
+    var items: ArrayList<T> = ObservableCollection<T>().apply {
         collectionChanged.observeForever(this@AutoAdapter)
     }
         set(value) {
@@ -157,17 +157,16 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
             } else {
                 1
             }
+        }
+        count += if (hasHeader) {
+            1
         } else {
-            count += if (hasHeader) {
-                1
-            } else {
-                0
-            }
-            count += if (hasFooter) {
-                1
-            } else {
-                0
-            }
+            0
+        }
+        count += if (hasFooter) {
+            1
+        } else {
+            0
         }
         return count
     }
