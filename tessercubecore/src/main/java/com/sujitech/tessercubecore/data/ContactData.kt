@@ -6,6 +6,7 @@ import android.os.Parcelable
 import com.tylersuehr.chips.Chip
 import io.requery.*
 import moe.tlaster.kotlinpgp.data.VerifyStatus
+import java.math.BigDecimal
 import java.util.*
 
 enum class TrustLevel {
@@ -125,3 +126,13 @@ interface MessageData : Persistable, Parcelable {
     var verifyStatus: VerifyStatus
 }
 
+@Entity
+interface WalletData : Persistable, Parcelable {
+    @get:Key
+    @get:Generated
+    val dataId: Int
+    var address: String
+    var passwordId: String
+    var mnemonicId: String
+    var balance: BigDecimal?
+}
