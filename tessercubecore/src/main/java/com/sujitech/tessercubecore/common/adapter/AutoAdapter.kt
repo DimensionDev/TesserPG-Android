@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.sujitech.tessercubecore.common.collection.CollectionChangedEventArg
 import com.sujitech.tessercubecore.common.collection.CollectionChangedType
+import com.sujitech.tessercubecore.common.collection.INotifyCollectionChanged
 import com.sujitech.tessercubecore.common.collection.ObservableCollection
 import com.sujitech.tessercubecore.common.extension.load
 
@@ -59,18 +60,33 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
             val action: (View, T, position: Int, AutoAdapter<T>) -> Unit
     )
 
-    private val onItemsChanged: (Any, CollectionChangedEventArg) -> Unit = { _, _ ->
-        notifyDataSetChanged()
-    }
-
-    val items = ObservableCollection<T>().apply {
+    var items: List<T> = ObservableCollection<T>().apply {
         collectionChanged.observeForever(this@AutoAdapter)
     }
+        set(value) {
+            field = value
+
+            val current = field
+            if (current is INotifyCollectionChanged) {
+                current.collectionChanged.removeObserver(this)
+            }
+            field = value
+            if (value is INotifyCollectionChanged) {
+                value.collectionChanged.observeForever(this)
+            }
+
+            notifyDataSetChanged()
+        }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
-        items.collectionChanged.removeObserver(this)
+        items.let {
+            it as? INotifyCollectionChanged
+        }?.let {
+            it.collectionChanged.removeObserver(this)
+        }
     }
+
     override fun getItemViewType(position: Int): Int {
         if (items.count() == 0 && emptyView != 0) {
             return ViewType.EmptyView.ordinal
