@@ -12,7 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.wallet.CreateWalletActivity
 import com.sujitech.tessercubecore.activity.wallet.ImportWalletActivity
-import com.sujitech.tessercubecore.activity.wallet.SendRedpacketActivity
+import com.sujitech.tessercubecore.activity.wallet.SendRedPacketActivity
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
 import com.sujitech.tessercubecore.common.extension.formatWei
 import com.sujitech.tessercubecore.common.extension.shareText
@@ -61,7 +61,7 @@ class WalletFragment : ViewPagerFragment(R.layout.fragment_wallet) {
             context.toActivity<CreateWalletActivity>()
         }
         import_key_button.setOnClickListener {
-            //            context.toActivity<ImportWalletActivity>()
+            context.toActivity<ImportWalletActivity>()
         }
         recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
@@ -81,7 +81,7 @@ class WalletFragment : ViewPagerFragment(R.layout.fragment_wallet) {
                             bindText(R.id.item_key_type) {
                                 it.balance?.takeIf {
                                     it > 0.toBigDecimal()
-                                }?.formatWei() ?: "0 ETH"
+                                }?.formatWei()?.toString() ?: "0 ETH"
                             }
                             itemLongPressed.observe(viewLifecycleOwner, Observer { args ->
                                 PopupMenu(args.view.context, args.view).apply {
@@ -116,7 +116,7 @@ class WalletFragment : ViewPagerFragment(R.layout.fragment_wallet) {
             }
         }
         create_redpacket_button.setOnClickListener {
-            context.toActivity<SendRedpacketActivity>()
+            context.toActivity<SendRedPacketActivity>()
         }
 
         viewModel.wallets.collectionChanged.observe(viewLifecycleOwner, Observer {

@@ -22,20 +22,26 @@ class WalletViewModel : ViewModel() {
 
     private val redPacketSubscription: Disposable = DbContext.data.select(RedPacketData::class).get().observableResult().subscribe {
         totalRedPacket = it.toList()
+        updateRedPacket()
     }
 
     var currentWallet: WalletData? = null
         set(value) {
             field = value
-            if (redPacket.any()) {
-                redPacket.clear()
-            }
-            if (value != null) {
-                redPacket.addAll(totalRedPacket.filter {
-                    it.senderAddress == value.address || it.claimAddress == value.address
-                })
-            }
+//            updateRedPacket()
         }
+
+
+    private fun updateRedPacket() {
+        if (redPacket.any()) {
+            redPacket.clear()
+        }
+        currentWallet?.let { value ->
+            redPacket.addAll(totalRedPacket.filter {
+                it.senderAddress == value.address || it.claimAddress == value.address
+            })
+        }
+    }
 
 
     override fun onCleared() {

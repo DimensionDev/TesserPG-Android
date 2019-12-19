@@ -154,6 +154,6 @@ private fun getType(algorithm: Int, bitStrength: Int): String {
 @ExperimentalUnsignedTypes
 fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
 
-fun Number.formatWei(digits: Int = 4) = Convert.fromWei(this.toString(), Convert.Unit.ETHER)
+fun Number.formatWei(digits: Int = 4) = Convert.fromWei(this.toString(), Convert.Unit.ETHER).format(digits)
 
 fun Number.format(digits: Int = 4) = "%.${digits}f".format(this)

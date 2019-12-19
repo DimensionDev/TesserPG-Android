@@ -14,3 +14,5 @@ object DbContext {
         KotlinReactiveEntityStore<Persistable>(KotlinEntityDataStore(source.configuration))
     }
 }
+
+

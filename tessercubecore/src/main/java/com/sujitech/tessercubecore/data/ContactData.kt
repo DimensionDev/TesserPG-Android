@@ -146,7 +146,7 @@ interface RedPacketData : Persistable, Parcelable {
     var aesVersion: Int
     var contractVersion: Int
     var contractAddress: String
-    var uuids: List<String>
+    var uuids: String
     var isRandom: Boolean
     var createNonce: Int?
     var creationTransactionHash: String?
