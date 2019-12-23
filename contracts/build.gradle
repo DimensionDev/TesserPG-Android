@@ -1,14 +1,7 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:4.5.0'
-    }
+plugins {
+    id 'java-library'
+    id 'org.web3j' version '4.5.0'
 }
-
-apply plugin: 'java-library'
-apply plugin: 'org.web3j'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -16,13 +9,12 @@ dependencies {
 }
 
 solidity {
-    executable = "C:\\solidity\\solc.exe"
+    executable = "docker run --rm -v $projectDir:/src -w=/src ethereum/solc:stable"
 }
 
 web3j {
     generatedPackageName = 'com.sujitech.tessercubecore.contracts.generated'
 }
-
 
 sourceCompatibility = "8"
 targetCompatibility = "8"
