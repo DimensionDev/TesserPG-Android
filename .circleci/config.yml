@@ -5,6 +5,7 @@ jobs:
       - image: circleci/android:api-29-ndk
     steps:
       - checkout
+      - setup_remote_docker
       - run: git submodule update --init --recursive
       - run: echo y | sdkmanager "ndk-bundle" "platforms;android-29"
       - run: echo $SIGN_KEY_BASE64 | base64 --decode >> ${HOME}/keystore.jks
@@ -24,6 +25,7 @@ jobs:
       JVM_OPTS: -Xmx2048m
     steps:
       - checkout
+      - setup_remote_docker
       - run: git submodule update --init --recursive
       - run: echo y | sdkmanager "ndk-bundle" "platforms;android-29"
       - run: echo $SIGN_KEY_BASE64 | base64 --decode >> ${HOME}/keystore.jks
