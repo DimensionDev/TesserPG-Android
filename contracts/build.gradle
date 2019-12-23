@@ -9,7 +9,7 @@ dependencies {
 }
 
 solidity {
-    executable = "docker run --rm -v $projectDir:/src -w=/src ethereum/solc:stable"
+    executable = "docker run --rm -v $projectDir:/src -w=/src ethereum/solc:0.5.15"
 }
 
 web3j {
