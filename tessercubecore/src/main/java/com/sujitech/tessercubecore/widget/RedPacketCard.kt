@@ -9,6 +9,7 @@ import com.sujitech.tessercubecore.common.extension.formatWei
 import com.sujitech.tessercubecore.common.prettyTime
 import com.sujitech.tessercubecore.data.RedPacketData
 import com.sujitech.tessercubecore.data.RedPacketStatus.*
+import com.sujitech.tessercubecore.data.passwords
 import kotlinx.android.synthetic.main.widget_red_packet_card.view.*
 import java.util.*
 
@@ -36,13 +37,13 @@ class RedPacketCard : FrameLayout {
         red_packet_sender.text = "${value.senderName}(${value.senderAddress})"
 
         value.blockCreationTime?.let {
-            Date(it)
+            Date(it * 1000)
         }?.let {
             // TODO: do not format older than 1 hour
             red_packet_time.text = prettyTime.format(it)
         }
 
-        red_packet_shares.text = "${value.sendTotal.formatWei()} ETH in total / ${value.uuids.count()} shares"
+        red_packet_shares.text = "${value.sendTotal.formatWei()} ETH in total / ${value.passwords.count()} shares"
 
         red_packet_state.text = when (value.status) {
             initial -> {

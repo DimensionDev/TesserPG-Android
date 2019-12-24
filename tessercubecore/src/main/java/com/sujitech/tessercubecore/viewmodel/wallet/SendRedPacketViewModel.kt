@@ -3,6 +3,7 @@ package com.sujitech.tessercubecore.viewmodel.wallet
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sujitech.tessercubecore.common.extension.await
 import com.sujitech.tessercubecore.common.wallet.*
 import com.sujitech.tessercubecore.contracts.generated.HappyRedPacket
 import com.sujitech.tessercubecore.data.*
@@ -14,6 +15,7 @@ import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
 import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.exceptions.TransactionException
 import org.web3j.utils.Convert
 import org.web3j.utils.Numeric
 import java.math.BigDecimal
@@ -26,7 +28,6 @@ class SendRedPacketViewModel : ViewModel() {
 
     fun refreshWalletBalance() {
         viewModelScope.launch(Dispatchers.IO) {
-            val web3j = createWeb3j()
             wallets.value?.let { wallets ->
                 for (wallet in wallets) {
                     val balance = web3j.ethGetBalance(wallet.address, DefaultBlockParameterName.LATEST).send()
@@ -62,7 +63,6 @@ class SendRedPacketViewModel : ViewModel() {
             walletPassword: String,
             walletMnemonic: String
     ): RedPacketData {
-        val web3j = createWeb3j()
         val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
         val contractGasProvider = getDefaultGasProvider()
         val contract = HappyRedPacket.load(
@@ -83,12 +83,15 @@ class SendRedPacketViewModel : ViewModel() {
                 senderName,
                 weiValue
         ).encodeFunctionCall()
-        val nonce = web3j.ethGetTransactionCount(credentials.address, DefaultBlockParameterName.PENDING).send().let {
+        val nonce = web3j.ethGetTransactionCount(credentials.address, DefaultBlockParameterName.PENDING).sendAsync().await().let {
             it.transactionCount
         }
         val rawTransaction = RawTransaction.createTransaction(nonce, defaultGasPrice, defaultGasLimit, contract.contractAddress, weiValue, data)
         val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, ethChainID, credentials)
-        val transaction = web3j.ethSendRawTransaction(Numeric.toHexString(signedRawTransaction)).send()
+        val transaction = web3j.ethSendRawTransaction(Numeric.toHexString(signedRawTransaction)).sendAsync().await()
+        if (transaction.transactionHash == null) {
+            throw TransactionException(transaction.error.message)
+        }
         val redPacketData = RedPacketDataEntity().apply {
             this.blockCreationTime = System.currentTimeMillis() / 1000
             this.contractAddress = redPacketContractAddress
@@ -105,6 +108,7 @@ class SendRedPacketViewModel : ViewModel() {
             //TODO: split creation step
             this.creationTransactionHash = transaction.transactionHash
             this.createNonce = nonce.toInt()
+            this.creationFunctionCall = data
         }
         withContext(Dispatchers.Main) {
             DbContext.data.insert(redPacketData).blockingGet()

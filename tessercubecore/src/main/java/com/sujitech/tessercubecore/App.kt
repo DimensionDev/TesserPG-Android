@@ -21,6 +21,9 @@ import moe.tlaster.kotlinpgp.KotlinPGP
 import moe.tlaster.kotlinpgp.isPGPMessage
 import moe.tlaster.kotlinpgp.isPGPPublicKey
 import org.bouncycastle.bcpg.ArmoredOutputStream
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.Security
+
 
 lateinit var appContext: Context
 class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
@@ -57,7 +60,18 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
         clipboardManager.addPrimaryClipChangedListener(this)
         KotlinPGP.header += "Comment" to "Encrypted with https://tessercube.com/"
         KotlinPGP.header += ArmoredOutputStream.VERSION_HDR to null
+        setupBouncyCastle()
     }
+
+    private fun setupBouncyCastle() {
+        val provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) ?: return
+        if (provider is BouncyCastleProvider) {
+            return
+        }
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
+        Security.insertProviderAt(BouncyCastleProvider(), 1)
+    }
+
 
     override fun onPrimaryClipChanged() {
         if (!FloatingHoverUtils.hasPermission(appContext)) {

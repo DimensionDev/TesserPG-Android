@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_navigation"
+    app:startDestination="@+id/navigation_contacts">
+
+    <fragment
+        android:id="@+id/navigation_contacts"
+        android:name="com.sujitech.tessercubecore.fragment.ContactsFragment"
+        android:label="@string/contacts" />
+
+    <fragment
+        android:id="@+id/navigation_message"
+        android:name="com.sujitech.tessercubecore.fragment.MessagesFragment"
+        android:label="@string/message" />
+
+    <fragment
+        android:id="@+id/navigation_wallet"
+        android:name="com.sujitech.tessercubecore.fragment.wallet.WalletFragment"
+        android:label="Wallet" />
+
+    <fragment
+        android:id="@+id/navigation_me"
+        android:name="com.sujitech.tessercubecore.fragment.MeFragment"
+        android:label="@string/me" />
+</navigation>

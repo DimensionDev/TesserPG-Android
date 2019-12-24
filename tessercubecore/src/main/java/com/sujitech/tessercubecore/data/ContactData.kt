@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Parcelable
 import com.tylersuehr.chips.Chip
 import io.requery.*
+import io.requery.kotlin.eq
 import moe.tlaster.kotlinpgp.data.VerifyStatus
 import java.math.BigDecimal
 import java.util.*
@@ -142,12 +143,14 @@ interface RedPacketData : Persistable, Parcelable {
     @get:Key
     @get:Generated
     val dataId: Int
-
     var aesVersion: Int
     var contractVersion: Int
     var contractAddress: String
+
+    // Split by ;
     var uuids: String
     var isRandom: Boolean
+    var failReason: String?
     var createNonce: Int?
     var creationTransactionHash: String?
     var blockCreationTime: Long?
@@ -166,7 +169,18 @@ interface RedPacketData : Persistable, Parcelable {
     var refundTransactionHash: String?
     var refundAmount: BigDecimal?
     var status: RedPacketStatus
+    var creationFunctionCall: String?
+    var claimFunctionCall: String?
+    var refundFunctionCall: String?
+    var claimNonce: Int?
+    var refundNonce: Int?
+}
 
+val RedPacketData.passwords
+    get() = uuids.split(";")
+
+fun RedPacketData.isFromMe(): Boolean {
+    return DbContext.data.select(WalletData::class).where(WalletData::address eq this.senderAddress).get().any()
 }
 
 enum class RedPacketStatus {

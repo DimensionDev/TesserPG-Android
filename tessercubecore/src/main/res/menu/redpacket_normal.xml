@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_claim_red_packet"
+        android:title="Claim"
+        />
+    <item
+        android:id="@+id/menu_copy_text"
+        android:title="@string/copy_text"
+        />
+</menu>

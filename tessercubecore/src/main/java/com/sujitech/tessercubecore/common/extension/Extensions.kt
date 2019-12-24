@@ -4,6 +4,8 @@ import android.content.res.Resources
 import android.util.TypedValue
 import com.sujitech.tessercubecore.data.*
 import kotlinx.coroutines.Deferred
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.json.Json
 import moe.tlaster.kotlinpgp.*
 import moe.tlaster.kotlinpgp.data.VerifyStatus
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags
@@ -13,6 +15,11 @@ import org.bouncycastle.openpgp.PGPSecretKeyRing
 import org.bouncycastle.util.encoders.Hex
 import org.web3j.utils.Convert
 import java.util.*
+import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
 suspend fun <T> await(block: () -> Deferred<T>): T {
@@ -151,9 +158,23 @@ private fun getType(algorithm: Int, bitStrength: Int): String {
     return "$pref-$sub"
 }
 
-@ExperimentalUnsignedTypes
-fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
+fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
+fun String.hexStringToByteArray() = ByteArray(this.length / 2) { this.substring(it * 2, it * 2 + 2).toInt(16).toByte() }
 
 fun Number.formatWei(digits: Int = 4) = Convert.fromWei(this.toString(), Convert.Unit.ETHER).format(digits)
 
 fun Number.format(digits: Int = 4) = "%.${digits}f".format(this)
+
+suspend fun <T> CompletableFuture<T>.await(): T =
+        suspendCoroutine<T> { cont: Continuation<T> ->
+            whenComplete { result, exception ->
+                if (exception == null) // the future has been completed normally
+                    cont.resume(result)
+                else // the future has completed with an exception
+                    cont.resumeWithException(exception)
+            }
+        }
+
+inline fun <reified T> T.toJson(serializer: SerializationStrategy<T>): String {
+    return Json.nonstrict.stringify(serializer, this)
+}

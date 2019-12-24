@@ -3,18 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:title="@string/contacts"
-        android:id="@+id/menu_contacts"
+        android:id="@+id/navigation_contacts"
         android:icon="@drawable/ic_people_black_24dp"/>
     <item
         android:title="@string/message"
-        android:id="@+id/menu_messages"
+        android:id="@+id/navigation_message"
         android:icon="@drawable/ic_chat_black_24dp"/>
     <item
         android:title="Wallet"
-        android:id="@+id/menu_wallet"
+        android:id="@+id/navigation_wallet"
         android:icon="@drawable/ic_chat_black_24dp"/>
     <item
         android:title="@string/me"
-        android:id="@+id/menu_me"
+        android:id="@+id/navigation_me"
         android:icon="@drawable/ic_account_circle_black_24dp"/>
 </menu>

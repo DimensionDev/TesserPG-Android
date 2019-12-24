@@ -6,6 +6,7 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp">
     <com.sujitech.tessercubecore.widget.RedPacketCard
+        android:id="@+id/red_packet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </androidx.cardview.widget.CardView>
