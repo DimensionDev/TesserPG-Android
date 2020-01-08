@@ -130,13 +130,8 @@ class WalletFragment : ViewPagerFragment(R.layout.fragment_wallet) {
                     view.data = item
                 }
                 itemClicked.observe(viewLifecycleOwner, Observer {
-                    when (it.item.status) {
-                        RedPacketStatus.normal, RedPacketStatus.incoming -> {
-                            context.toActivity<IncomingRedPacketActivity>(Intent().putExtra("data", it.item))
-                        }
-                        RedPacketStatus.claimed, RedPacketStatus.expired, RedPacketStatus.empty -> {
-
-                        }
+                    if (it.item.status != RedPacketStatus.pending || it.item.status != RedPacketStatus.fail) {
+                        context.toActivity<RedPacketDetailActivity>(Intent().putExtra("data", it.item))
                     }
                 })
                 itemLongPressed.observe(viewLifecycleOwner, Observer { args ->

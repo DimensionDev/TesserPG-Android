@@ -4,6 +4,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlinx-serialization'
 
+def secretPropertiesFile = rootProject.file("secret.properties")
+def secretProperties = new Properties()
+secretProperties.load(new FileInputStream(secretPropertiesFile))
+
+
 android {
     compileSdkVersion target_version
     defaultConfig {
@@ -12,6 +17,13 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+
+        buildConfigField("String", "GCM_IV", secretProperties['GCM_IV'])
+        buildConfigField("String", "AES_KEY", secretProperties['AES_KEY'])
+        buildConfigField("String", "CONTRACT_ADDRESS", secretProperties['CONTRACT_ADDRESS'])
+        buildConfigField("String", "ETH_URL", secretProperties['ETH_URL'])
+        buildConfigField("int", "NET_TYPE", secretProperties['NET_TYPE'])
     }
 
     buildTypes {

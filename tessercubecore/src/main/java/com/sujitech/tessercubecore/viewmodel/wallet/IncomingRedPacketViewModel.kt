@@ -1,6 +1,5 @@
 package com.sujitech.tessercubecore.viewmodel.wallet
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.sujitech.tessercubecore.common.extension.await
 import com.sujitech.tessercubecore.common.extension.hexStringToByteArray
@@ -9,6 +8,7 @@ import com.sujitech.tessercubecore.contracts.generated.HappyRedPacket
 import com.sujitech.tessercubecore.data.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.web3j.crypto.Hash
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
 import org.web3j.crypto.WalletUtils
@@ -40,7 +40,7 @@ class IncomingRedPacketViewModel : ViewModel() {
                 redPacketId,
                 currentId,
                 credentials.address.removePrefix("0x"),
-                credentials.address.removePrefix("0x").sha3Hex()
+                Hash.sha3(credentials.address.removePrefix("0x").hexStringToByteArray())
         ).encodeFunctionCall()
         val nonce = web3j.ethGetTransactionCount(credentials.address, DefaultBlockParameterName.PENDING).sendAsync().await().let {
             it.transactionCount

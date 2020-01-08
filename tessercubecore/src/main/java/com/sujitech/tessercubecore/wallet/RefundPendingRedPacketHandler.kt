@@ -29,14 +29,6 @@ class RefundPendingRedPacketHandler: RedPacketHandler() {
         if (revertReason == null) {
             return
         }
-        when (revertReason.take(3).toInt()) {
-            9 -> {
-                if (redPacketData.claimAmount == null) {
-                    redPacketData.status = RedPacketStatus.normal
-                } else {
-                    redPacketData.status = RedPacketStatus.claimed
-                }
-            }
-        }
+        redPacketData.status = RedPacketStatus.expired
     }
 }

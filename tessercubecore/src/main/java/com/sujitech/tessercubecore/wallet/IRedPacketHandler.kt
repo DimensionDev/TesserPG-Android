@@ -13,6 +13,7 @@ fun RedPacketStatus.createHandler() : IRedPacketHandler? {
         RedPacketStatus.pending -> PendingRedPacketHandler()
         RedPacketStatus.claimPending -> ClaimPendingRedPacketHandler()
         RedPacketStatus.refundPending -> RefundPendingRedPacketHandler()
+        RedPacketStatus.normal, RedPacketStatus.claimed, RedPacketStatus.incoming, RedPacketStatus.empty -> ExpirableStateRedPacketHandler()
         else -> null
     }
 }

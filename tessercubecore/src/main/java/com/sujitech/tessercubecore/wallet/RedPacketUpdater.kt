@@ -30,7 +30,12 @@ object RedPacketUpdater {
             while (!queue.isEmpty()) {
                 val redPacketData = queue.take()
                 val handler = redPacketData.status.createHandler() ?: continue
-                handler.processingRedPacket(redPacketData, contract)
+                try {
+                    handler.processingRedPacket(redPacketData, contract)
+                } catch (e: Throwable) {
+                    // Ignore any exception
+                    e.printStackTrace()
+                }
             }
         }
     }
