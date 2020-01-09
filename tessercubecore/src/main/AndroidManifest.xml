@@ -13,7 +13,9 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".activity.wallet.IncomingRedPacketActivity"></activity>
+        <activity android:name=".activity.wallet.AddTokenActivity"></activity>
+        <activity android:name=".activity.wallet.WalletDetailActivity" />
+        <activity android:name=".activity.wallet.IncomingRedPacketActivity" />
         <activity android:name=".activity.wallet.OpenRedPacketActivity" />
         <activity android:name=".activity.wallet.RedPacketDetailActivity" />
         <activity android:name=".activity.wallet.SendRedPacketFinishActivity" />

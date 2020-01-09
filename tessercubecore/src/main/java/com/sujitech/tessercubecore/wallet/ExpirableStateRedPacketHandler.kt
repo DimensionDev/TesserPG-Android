@@ -15,7 +15,7 @@ class ExpirableStateRedPacketHandler : IRedPacketHandler {
             return
         }
         val result = contract.check_availability(redPacketData.redPacketId!!.hexStringToByteArray()).sendAsync().await()
-        if (result.component4()) {
+        if (result.component5()) {
             redPacketData.status = RedPacketStatus.expired
             withContext(Dispatchers.Main) {
                 DbContext.data.update(redPacketData).blockingGet()

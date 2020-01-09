@@ -22,6 +22,7 @@ import com.sujitech.tessercubecore.common.adapter.getItemsSource
 import com.sujitech.tessercubecore.common.adapter.updateItemsSource
 import com.sujitech.tessercubecore.common.extension.shareText
 import com.sujitech.tessercubecore.common.extension.toActivity
+import com.sujitech.tessercubecore.contracts.generated.IERC20
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.MessageData
 import com.sujitech.tessercubecore.widget.MessageCard

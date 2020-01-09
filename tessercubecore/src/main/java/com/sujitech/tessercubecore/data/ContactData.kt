@@ -135,7 +135,47 @@ interface WalletData : Persistable, Parcelable {
     var address: String
     var passwordId: String
     var mnemonicId: String
+    /**
+     * ETH balance
+     */
     var balance: BigDecimal?
+
+    @get:ForeignKey
+    @get:OneToMany
+    var walletToken: List<WalletToken>
+}
+
+@Entity
+interface ERC20Token : Persistable, Parcelable {
+    @get:Key
+    @get:Generated
+    val dataId: Int
+    var address: String
+    var name: String
+    var decimal: Int
+    var symbol: String
+    var isUserDefine: Boolean
+    var deletedAt: Date?
+
+    @get:ForeignKey
+    @get:OneToOne
+    var walletToken: WalletToken
+    @get:ForeignKey
+    @get:OneToMany
+    var redPacketData: List<RedPacketData>
+}
+
+@Entity
+interface WalletToken : Persistable, Parcelable {
+    @get:Key
+    @get:Generated
+    val dataId: Int
+    @get:ManyToOne
+    var wallet: WalletData
+    @get:OneToOne
+    var token: ERC20Token
+    var index: Int
+    var tokenBalance: BigDecimal?
 }
 
 @Entity
@@ -174,6 +214,11 @@ interface RedPacketData : Persistable, Parcelable {
     var refundFunctionCall: String?
     var claimNonce: Int?
     var refundNonce: Int?
+    var network: RedPacketNetwork
+    var tokenType: RedPacketTokenType
+    @get:ManyToOne
+    var erC20Token: ERC20Token?
+    var erc20ApproveTransactionHash: String?
 }
 
 val RedPacketData.passwords
@@ -181,6 +226,16 @@ val RedPacketData.passwords
 
 fun RedPacketData.isFromMe(): Boolean {
     return DbContext.data.select(WalletData::class).where(WalletData::address eq this.senderAddress).get().any()
+}
+
+enum class RedPacketNetwork {
+    Mainnet,
+    Rinkeby
+}
+
+enum class RedPacketTokenType {
+    ETH,
+    ERC20
 }
 
 enum class RedPacketStatus {

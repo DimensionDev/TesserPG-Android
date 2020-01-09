@@ -2,14 +2,12 @@ package com.sujitech.tessercubecore.common.wallet
 
 import com.sujitech.tessercubecore.BuildConfig
 import com.sujitech.tessercubecore.common.extension.hexStringToByteArray
-import com.sujitech.tessercubecore.data.RedPacketData
-import com.sujitech.tessercubecore.data.RedPacketDataEntity
-import com.sujitech.tessercubecore.data.RedPacketStatus
-import com.sujitech.tessercubecore.data.passwords
+import com.sujitech.tessercubecore.data.*
 import io.github.novacrypto.base58.Base58
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.web3j.tx.ChainIdLong
 import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
@@ -124,7 +122,19 @@ fun RedPacketData.toRawPayload(): RedPacketRawPayload {
                     sendMessage,
                     senderName
             ),
-            sendTotal.toString()
+            sendTotal.toString(),
+            network = when (ethChainID) {
+                ChainIdLong.RINKEBY -> RedPacketNetwork.Rinkeby
+                else -> null
+            },
+            token = erC20Token?.toTokenData(),
+            tokenType = tokenType
+    )
+}
+
+private fun ERC20Token.toTokenData(): ERC20TokenData {
+    return ERC20TokenData(
+            address, name, decimal, symbol
     )
 }
 
@@ -138,7 +148,18 @@ data class RedPacketRawPayload(
         val passwords: List<String>,
         val rpid: String,
         val sender: RedPacketSenderData,
-        val total: String
+        val total: String,
+        val network: RedPacketNetwork?,
+        val tokenType: RedPacketTokenType,
+        val token: ERC20TokenData?
+)
+
+@Serializable
+data class ERC20TokenData(
+        val address: String,
+        val name: String,
+        val decimal: Int,
+        val symbol: String
 )
 
 @Serializable

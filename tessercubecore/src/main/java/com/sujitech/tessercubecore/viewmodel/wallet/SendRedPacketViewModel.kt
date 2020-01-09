@@ -10,7 +10,6 @@ import com.sujitech.tessercubecore.data.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.web3j.crypto.Hash
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
 import org.web3j.crypto.WalletUtils
@@ -74,15 +73,17 @@ class SendRedPacketViewModel : ViewModel() {
             UUID.randomUUID().toString()
         }
         val weiValue = Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger()
-        val data = contract.create_red_packet(
-                uuids.map { it.sha3Hex() },
-                isRandom,
-                defaultRedPacketDuration.toBigInteger(),//TODO
-                Hash.sha3("seed".toByteArray()),
-                senderMessage,
-                senderName,
-                weiValue
-        ).encodeFunctionCall()
+        TODO("Not implement")
+        val data = ""
+//        val data = contract.create_red_packet(
+//                uuids.map { it.sha3Hex() },
+//                isRandom,
+//                defaultRedPacketDuration.toBigInteger(),//TODO
+//                Hash.sha3("seed".toByteArray()),
+//                senderMessage,
+//                senderName,
+//                weiValue,
+//        ).encodeFunctionCall()
         val nonce = web3j.ethGetTransactionCount(credentials.address, DefaultBlockParameterName.PENDING).sendAsync().await().let {
             it.transactionCount
         }
