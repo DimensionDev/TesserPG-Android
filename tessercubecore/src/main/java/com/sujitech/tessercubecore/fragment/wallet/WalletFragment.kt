@@ -47,6 +47,9 @@ class WalletFragment : ViewPagerFragment(R.layout.fragment_wallet) {
                             it > 0.toBigDecimal()
                         }?.formatWei() ?: "0 ETH"
                     }
+                    itemClicked.observe(viewLifecycleOwner, Observer {
+                        context.toActivity<WalletDetailActivity>(Intent().putExtra("data", it.item))
+                    })
                     itemLongPressed.observe(viewLifecycleOwner, Observer { args ->
                         PopupMenu(args.view.context, args.view).apply {
                             this.gravity = Gravity.END

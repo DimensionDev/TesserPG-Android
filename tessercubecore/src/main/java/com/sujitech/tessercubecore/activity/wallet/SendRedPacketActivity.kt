@@ -1,5 +1,6 @@
 package com.sujitech.tessercubecore.activity.wallet
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -16,6 +17,7 @@ import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.extension.formatWei
 import com.sujitech.tessercubecore.common.extension.task
 import com.sujitech.tessercubecore.common.extension.toActivity
+import com.sujitech.tessercubecore.data.ERC20Token
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.viewmodel.wallet.SendRedPacketViewModel
 import kotlinx.android.synthetic.main.activity_send_red_packet.*
@@ -23,6 +25,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class SendRedPacketActivity : BaseActivity() {
+
+    private val TOKEN_REQUEST_CODE = 789
 
     private val walletSpinnerAdapter by lazy {
         object : ArrayAdapter<WalletData>(this, android.R.layout.simple_spinner_dropdown_item, viewModel.wallets.value!!) {
@@ -48,6 +52,15 @@ class SendRedPacketActivity : BaseActivity() {
 
         wallet_spinner.adapter = walletSpinnerAdapter
 
+        selected_token.text = "ETH" // TODO
+        viewModel.token.observe(this, Observer {
+            selected_token.text = it?.symbol ?: "ETH"
+        })
+        selected_token.setOnClickListener {
+            startActivityForResult(Intent(this, TokenSelectActivity::class.java)
+                    .putExtra("data", wallet_spinner.selectedItem as WalletData), TOKEN_REQUEST_CODE)
+        }
+
         wallet_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
@@ -69,7 +82,6 @@ class SendRedPacketActivity : BaseActivity() {
             }
         })
         name_input.setText(Settings.get("red_packet_sender_name", ""))
-        viewModel.refreshWalletBalance()
     }
 
     private fun commit() {
@@ -105,6 +117,18 @@ class SendRedPacketActivity : BaseActivity() {
                         finish()
                     }
                 }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data == null) {
+            return
+        }
+        if (requestCode == TOKEN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data.getParcelableExtra<ERC20Token>("data")?.let {
+                viewModel.token.value = it
             }
         }
     }

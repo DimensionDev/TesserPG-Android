@@ -134,7 +134,7 @@ fun RedPacketData.toRawPayload(): RedPacketRawPayload {
 
 private fun ERC20Token.toTokenData(): ERC20TokenData {
     return ERC20TokenData(
-            address, name, decimal, symbol
+            address, name, decimals, symbol
     )
 }
 
@@ -158,7 +158,7 @@ data class RedPacketRawPayload(
 data class ERC20TokenData(
         val address: String,
         val name: String,
-        val decimal: Int,
+        val decimals: Int,
         val symbol: String
 )
 

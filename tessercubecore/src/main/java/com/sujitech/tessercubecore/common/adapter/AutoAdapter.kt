@@ -256,7 +256,11 @@ class AutoAdapter<T>(@LayoutRes val layout: Int = android.R.layout.simple_list_i
     fun bindImage(@IdRes id: Int, value: (T) -> String) {
         actions.add(ActionData(id) { view, item, _, _ ->
             if (view is ImageView) {
-                view.load(value.invoke(item))
+                value.invoke(item).takeIf {
+                    it.isNotEmpty()
+                }?.let {
+                    view.load(it)
+                }
             }
         })
     }

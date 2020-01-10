@@ -3,7 +3,6 @@ package com.sujitech.tessercubecore.viewmodel.wallet
 import androidx.lifecycle.ViewModel
 import com.sujitech.tessercubecore.common.collection.ObservableCollection
 import com.sujitech.tessercubecore.data.DbContext
-import com.sujitech.tessercubecore.data.ERC20Token
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.data.WalletToken
 import io.reactivex.disposables.Disposable
@@ -19,9 +18,9 @@ class WalletDetailViewModel : ViewModel() {
         if (data == null) {
             return
         }
-        subscription = DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().observable().subscribe {
+        subscription = DbContext.data.select(WalletToken::class).where(WalletToken::wallet eq data).get().observableResult().subscribe {
             tokens.clear()
-            tokens.addAll(it.walletToken)
+            tokens.addAll(it)
         }
     }
 

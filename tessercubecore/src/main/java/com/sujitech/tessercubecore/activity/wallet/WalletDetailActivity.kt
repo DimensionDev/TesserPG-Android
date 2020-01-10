@@ -1,5 +1,6 @@
 package com.sujitech.tessercubecore.activity.wallet
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +35,7 @@ class WalletDetailActivity : BaseActivity() {
             shareText(data.address)
         }
         add_token_button.setOnClickListener {
-            toActivity<AddTokenActivity>()
+            toActivity<AddTokenActivity>(Intent().putExtra("data", data))
         }
         recycler_view.apply {
             layoutManager = LinearLayoutManager(this@WalletDetailActivity)
@@ -48,6 +49,9 @@ class WalletDetailActivity : BaseActivity() {
                 }
                 bindText(R.id.token_value) {
                     it.tokenBalance?.toString() ?: "0"
+                }
+                bindImage(R.id.token_image) {
+                    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${it.token.address}/logo.png"
                 }
             }
         }

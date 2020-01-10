@@ -11,11 +11,13 @@ import com.sujitech.tessercubecore.common.FloatingHoverUtils
 import com.sujitech.tessercubecore.common.MessageDataUtils
 import com.sujitech.tessercubecore.common.extension.getClipboardText
 import com.sujitech.tessercubecore.common.extension.toContactData
-import com.sujitech.tessercubecore.data.DbContext
-import com.sujitech.tessercubecore.data.KeyData
+import com.sujitech.tessercubecore.common.wallet.ERC20TokenData
+import com.sujitech.tessercubecore.data.*
 import com.sujitech.tessercubecore.widget.ContactView
 import com.sujitech.tessercubecore.widget.MessageCard
 import io.requery.kotlin.eq
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.list
 import moe.tlaster.floatinghover.FloatingController
 import moe.tlaster.kotlinpgp.KotlinPGP
 import moe.tlaster.kotlinpgp.isPGPMessage
@@ -26,6 +28,7 @@ import java.security.Security
 
 
 lateinit var appContext: Context
+
 class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
 
     companion object {
@@ -61,6 +64,36 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
         KotlinPGP.header += "Comment" to "Encrypted with https://tessercube.com/"
         KotlinPGP.header += ArmoredOutputStream.VERSION_HDR to null
         setupBouncyCastle()
+        setupToken()
+    }
+
+    private fun setupToken() {
+        if (DbContext.data.select(ERC20Token::class).get().any()) {
+            return
+        }
+        addPresetERC20Token(R.raw.mainnet_erc20, RedPacketNetwork.Mainnet)
+        addPresetERC20Token(R.raw.rinkeby_erc20, RedPacketNetwork.Rinkeby)
+    }
+
+    private fun addPresetERC20Token(id: Int, network: RedPacketNetwork) {
+        resources.openRawResource(id).bufferedReader().use {
+            it.readText()
+        }.let {
+            Json.nonstrict.parse(ERC20TokenData.serializer().list, it)
+        }.let {
+            it.map {
+                ERC20TokenEntity().apply {
+                    address = it.address
+                    name = it.name
+                    symbol = it.symbol
+                    decimals = it.decimals
+                    isUserDefine = false
+                    this.network = network
+                }
+            }
+        }.let {
+            DbContext.data.insert(it).blockingGet()
+        }
     }
 
     private fun setupBouncyCastle() {

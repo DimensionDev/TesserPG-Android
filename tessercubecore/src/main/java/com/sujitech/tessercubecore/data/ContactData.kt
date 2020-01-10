@@ -140,9 +140,8 @@ interface WalletData : Persistable, Parcelable {
      */
     var balance: BigDecimal?
 
-    @get:ForeignKey
     @get:OneToMany
-    var walletToken: List<WalletToken>
+    val walletToken: MutableList<WalletToken>
 }
 
 @Entity
@@ -152,17 +151,16 @@ interface ERC20Token : Persistable, Parcelable {
     val dataId: Int
     var address: String
     var name: String
-    var decimal: Int
+    var decimals: Int
     var symbol: String
     var isUserDefine: Boolean
     var deletedAt: Date?
+    var network: RedPacketNetwork
 
-    @get:ForeignKey
     @get:OneToOne
     var walletToken: WalletToken
-    @get:ForeignKey
     @get:OneToMany
-    var redPacketData: List<RedPacketData>
+    val redPacketData: MutableList<RedPacketData>
 }
 
 @Entity
@@ -170,11 +168,13 @@ interface WalletToken : Persistable, Parcelable {
     @get:Key
     @get:Generated
     val dataId: Int
+    @get:ForeignKey
     @get:ManyToOne
     var wallet: WalletData
+    @get:ForeignKey
     @get:OneToOne
     var token: ERC20Token
-    var index: Int
+    var orderIndex: Int
     var tokenBalance: BigDecimal?
 }
 
@@ -219,6 +219,9 @@ interface RedPacketData : Persistable, Parcelable {
     @get:ManyToOne
     var erC20Token: ERC20Token?
     var erc20ApproveTransactionHash: String?
+    var erc20ApproveNonce: Int?
+    var erc20ApproveFunctionCall: String?
+    var erc20ApproveResult: BigDecimal?
 }
 
 val RedPacketData.passwords
