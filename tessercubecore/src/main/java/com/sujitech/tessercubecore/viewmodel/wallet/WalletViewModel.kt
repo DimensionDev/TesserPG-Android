@@ -5,6 +5,7 @@ import com.sujitech.tessercubecore.common.collection.ObservableCollection
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.RedPacketData
 import com.sujitech.tessercubecore.data.WalletData
+import com.sujitech.tessercubecore.wallet.BalanceUpdater
 import com.sujitech.tessercubecore.wallet.RedPacketUpdater
 import io.reactivex.disposables.Disposable
 
@@ -30,6 +31,12 @@ class WalletViewModel : ViewModel() {
         RedPacketUpdater.put(totalRedPacket)
     }
 
+    init {
+        DbContext.data.select(WalletData::class).get().forEach {
+            BalanceUpdater.update(it)
+        }
+    }
+
     private fun updateRedPacket() {
         currentWallet?.let { value ->
             if (redPacket.any()) {
@@ -37,10 +44,9 @@ class WalletViewModel : ViewModel() {
             }
             redPacket.addAll(totalRedPacket.filter {
                 it.senderAddress == value.address || it.claimAddress == value.address
-            })
+            }.reversed())
         }
     }
-
 
     override fun onCleared() {
         super.onCleared()

@@ -43,7 +43,7 @@ class RedPacketCard : FrameLayout {
             red_packet_time.text = prettyTime.format(it)
         }
 
-        red_packet_shares.text = "${value.sendTotal.formatWei()} ETH in total / ${value.passwords.count()} shares"
+        red_packet_shares.text = "${value.sendTotal.formatWei()} in total / ${value.passwords.count()} shares"
 
         red_packet_state.text = when (value.status) {
             initial -> {
@@ -80,7 +80,7 @@ class RedPacketCard : FrameLayout {
             }
             refunded -> {
                 value.refundAmount?.let {
-                    "Refunded ${it.formatWei()} ETH"
+                    "Refunded ${it.formatWei()}"
                 } ?: "Refunded 0 ETH" // TODO
             }
         }

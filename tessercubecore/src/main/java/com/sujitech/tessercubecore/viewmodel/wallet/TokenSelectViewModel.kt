@@ -2,9 +2,11 @@ package com.sujitech.tessercubecore.viewmodel.wallet
 
 import androidx.lifecycle.ViewModel
 import com.sujitech.tessercubecore.common.collection.ObservableCollection
+import com.sujitech.tessercubecore.common.extension.format
 import com.sujitech.tessercubecore.data.*
 import io.reactivex.disposables.Disposable
 import io.requery.kotlin.eq
+import org.web3j.utils.Convert
 
 class TokenSelectViewModel : ViewModel() {
     private var walletSubscription: Disposable? = null
@@ -37,12 +39,12 @@ class TokenSelectViewModel : ViewModel() {
         }
         val wallet = DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId)
                 .get().firstOrNull() ?: return
-        walletSubscription = DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().observable().subscribe {
+        walletSubscription = DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().observableResult().subscribe {
             if (tokens.any()) {
                 tokens.removeAt(0)
                 tokens.add(0, WalletTokenEntity().apply {
                     this.wallet = data
-                    this.tokenBalance = data.balance
+                    this.tokenBalance = Convert.fromWei(data.balance, Convert.Unit.ETHER).format(4).toBigDecimal()
                     this.token = ERC20TokenEntity().apply {
                         this.symbol = "ETH"
                         this.name = "ETH"
@@ -55,7 +57,7 @@ class TokenSelectViewModel : ViewModel() {
             tokens.clear()
             tokens.add(WalletTokenEntity().apply {
                 this.wallet = data
-                this.tokenBalance = data.balance
+                this.tokenBalance = Convert.fromWei(data.balance, Convert.Unit.ETHER).format(4).toBigDecimal()
                 this.token = ERC20TokenEntity().apply {
                     this.symbol = "ETH"
                     this.name = "ETH"

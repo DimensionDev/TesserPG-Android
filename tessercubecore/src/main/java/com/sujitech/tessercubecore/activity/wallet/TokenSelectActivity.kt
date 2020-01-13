@@ -60,7 +60,7 @@ class TokenSelectActivity : AppCompatActivity() {
                     }
                 }
                 itemClicked.observe(this@TokenSelectActivity) {
-                    setResult(Activity.RESULT_OK, Intent().putExtra("data", it.item.token))
+                    setResult(Activity.RESULT_OK, Intent().putExtra("data", it.item))
                     finish()
                 }
             }

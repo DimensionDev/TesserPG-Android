@@ -3,6 +3,7 @@ package com.sujitech.tessercubecore.activity.wallet
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
@@ -26,11 +27,6 @@ class WalletDetailActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet_detail)
-        item_key_name.text = "Wallet ${data.address.take(6)}"
-        item_key_fingerprint.text = data.address
-        item_key_type.text = data.balance?.takeIf {
-            it > 0.toBigDecimal()
-        }?.formatWei() ?: "0 ETH"
         copy_address_button.setOnClickListener {
             shareText(data.address)
         }
@@ -56,5 +52,12 @@ class WalletDetailActivity : BaseActivity() {
             }
         }
         viewModel.loadToken(data)
+        viewModel.wallet.observe(this) {
+            item_key_name.text = "Wallet ${it.address.take(6)}"
+            item_key_fingerprint.text = it.address
+            item_key_type.text = it.balance?.takeIf {
+                it > 0.toBigDecimal()
+            }?.formatWei() ?: "0 ETH"
+        }
     }
 }

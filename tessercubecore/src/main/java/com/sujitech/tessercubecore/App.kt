@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import com.sujitech.tessercubecore.activity.contact.ContactDetailActivity
@@ -13,6 +14,7 @@ import com.sujitech.tessercubecore.common.extension.getClipboardText
 import com.sujitech.tessercubecore.common.extension.toContactData
 import com.sujitech.tessercubecore.common.wallet.ERC20TokenData
 import com.sujitech.tessercubecore.data.*
+import com.sujitech.tessercubecore.wallet.RedPacketUpdater
 import com.sujitech.tessercubecore.widget.ContactView
 import com.sujitech.tessercubecore.widget.MessageCard
 import io.requery.kotlin.eq
@@ -58,6 +60,7 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
 
     override fun onCreate() {
         super.onCreate()
+        Log.i("AppStart", "AppStart")
         appContext = applicationContext
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         clipboardManager.addPrimaryClipChangedListener(this)
@@ -65,6 +68,13 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
         KotlinPGP.header += ArmoredOutputStream.VERSION_HDR to null
         setupBouncyCastle()
         setupToken()
+        setupRedPacketStateSubscription()
+    }
+
+    private fun setupRedPacketStateSubscription() {
+        DbContext.data.select(RedPacketData::class).get().observableResult().subscribe {
+            RedPacketUpdater.put(it.toList())
+        }
     }
 
     private fun setupToken() {

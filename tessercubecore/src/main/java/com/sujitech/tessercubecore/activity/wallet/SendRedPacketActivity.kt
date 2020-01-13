@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.common.Settings
@@ -17,9 +18,12 @@ import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.extension.formatWei
 import com.sujitech.tessercubecore.common.extension.task
 import com.sujitech.tessercubecore.common.extension.toActivity
-import com.sujitech.tessercubecore.data.ERC20Token
+import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.WalletData
+import com.sujitech.tessercubecore.data.WalletToken
 import com.sujitech.tessercubecore.viewmodel.wallet.SendRedPacketViewModel
+import com.sujitech.tessercubecore.wallet.BalanceUpdater
+import io.requery.kotlin.eq
 import kotlinx.android.synthetic.main.activity_send_red_packet.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,7 +33,7 @@ class SendRedPacketActivity : BaseActivity() {
     private val TOKEN_REQUEST_CODE = 789
 
     private val walletSpinnerAdapter by lazy {
-        object : ArrayAdapter<WalletData>(this, android.R.layout.simple_spinner_dropdown_item, viewModel.wallets.value!!) {
+        object : ArrayAdapter<WalletData>(this, android.R.layout.simple_spinner_dropdown_item, viewModel.wallets) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val spinnerView = convertView
                         ?: layoutInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false)
@@ -54,7 +58,8 @@ class SendRedPacketActivity : BaseActivity() {
 
         selected_token.text = "ETH" // TODO
         viewModel.token.observe(this, Observer {
-            selected_token.text = it?.symbol ?: "ETH"
+            selected_token.text = it?.token?.symbol ?: "ETH"
+            wallet_eth.text = "${it?.tokenBalance ?: 0} ${it?.token?.symbol}"
         })
         selected_token.setOnClickListener {
             startActivityForResult(Intent(this, TokenSelectActivity::class.java)
@@ -67,8 +72,12 @@ class SendRedPacketActivity : BaseActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.wallets.value?.get(position)?.balance?.let {
+                viewModel.wallets.get(position)?.let {
+                    BalanceUpdater.update(it)
+                }
+                viewModel.wallets.get(position)?.balance?.let {
                     wallet_eth.text = it.formatWei()
+                    selected_token.text = "ETH" // TODO
                 }
             }
 
@@ -76,11 +85,16 @@ class SendRedPacketActivity : BaseActivity() {
         commit_button.setOnClickListener {
             commit()
         }
-        viewModel.wallets.observe(this, Observer {
-            it[wallet_spinner.selectedItemPosition].balance?.let {
-                wallet_eth.text = it.formatWei()
+        viewModel.updateTime.observe(this) {
+            val wallet = viewModel.wallets.get(wallet_spinner.selectedItemPosition)
+            if (viewModel.token.value?.token?.symbol ?: "ETH" == "ETH") {
+                wallet_eth.text = wallet.balance?.formatWei()
+            } else {
+                wallet_eth.text = wallet.walletToken.firstOrNull { it.token.address == viewModel.token.value?.token?.address }?.let {
+                    "${it.tokenBalance} ${it.token.symbol}"
+                }
             }
-        })
+        }
         name_input.setText(Settings.get("red_packet_sender_name", ""))
     }
 
@@ -92,8 +106,8 @@ class SendRedPacketActivity : BaseActivity() {
             shares_input.text.isNullOrEmpty() || shares_input.text.toString().toInt() == 0 -> {
                 shares_input.error = "Please input shares count"
             }
-            amount_input.text.toString().toBigDecimal() < 0.002.toBigDecimal() * shares_input.text.toString().toBigDecimal() -> {
-                amount_input.error = "Amount must above ${0.002 * shares_input.text.toString().toDouble()} ETH"
+            amount_input.text.toString().toBigDecimal() < 0.toBigDecimal() * shares_input.text.toString().toBigDecimal() -> {
+                amount_input.error = "Amount must above ${0 * shares_input.text.toString().toDouble()} ETH"
             }
             name_input.text.isNullOrEmpty() -> {
                 name_input.error = "Please set your name"
@@ -127,8 +141,8 @@ class SendRedPacketActivity : BaseActivity() {
             return
         }
         if (requestCode == TOKEN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data.getParcelableExtra<ERC20Token>("data")?.let {
-                viewModel.token.value = it
+            data.getParcelableExtra<WalletToken>("data")?.let {
+                viewModel.token.value = DbContext.data.select(WalletToken::class).where(WalletToken::dataId eq it.dataId).get().first()
             }
         }
     }

@@ -7,6 +7,8 @@ import com.sujitech.tessercubecore.common.wallet.*
 import com.sujitech.tessercubecore.contracts.generated.HappyRedPacket
 import com.sujitech.tessercubecore.contracts.generated.IERC20
 import com.sujitech.tessercubecore.data.*
+import com.sujitech.tessercubecore.wallet.BalanceUpdater
+import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.web3j.crypto.Hash
@@ -19,14 +21,29 @@ import org.web3j.utils.Convert
 import org.web3j.utils.Numeric
 import java.math.BigDecimal
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.pow
 
 class SendRedPacketViewModel : ViewModel() {
 
-    val token = MutableLiveData<ERC20Token>()
+    private var subscription: Disposable?
+    val updateTime = MutableLiveData<Long>()
+    val token = MutableLiveData<WalletToken>()
 
-    val wallets = MutableLiveData<List<WalletData>>(DbContext.data.select(WalletData::class).get().toList())
+    val wallets by lazy {
+        ArrayList(DbContext.data.select(WalletData::class).get().toList())
+    }
 
-    //TODO: update wallet && token balance
+    init {
+        subscription = DbContext.data.select(WalletData::class).get().observableResult().subscribe {
+            wallets.clear()
+            wallets.addAll(it)
+            updateTime.value = System.currentTimeMillis()
+        }
+        DbContext.data.select(WalletData::class).get().forEach {
+            BalanceUpdater.update(it)
+        }
+    }
 
     /**
      * Committing red packet
@@ -53,7 +70,7 @@ class SendRedPacketViewModel : ViewModel() {
         val uuids = (0 until shares).map {
             UUID.randomUUID().toString()
         }
-        val type = token.value?.symbol ?: "ETH"
+        val type = token.value?.token?.symbol ?: "ETH"
         if (type == "ETH") {
             val contract = HappyRedPacket.load(
                     redPacketContractAddress,
@@ -106,8 +123,8 @@ class SendRedPacketViewModel : ViewModel() {
             }
             return redPacketData
         } else {
-            val tokenValue = token.value ?: throw Error()
-            val sendValue = amount
+            val tokenValue = token.value?.token ?: throw Error()
+            val sendValue = amount * 10.0.pow(tokenValue.decimals).toBigDecimal()
             val erc20 = IERC20.load(tokenValue.address, web3j, credentials, contractGasProvider)
             val data = erc20.approve(redPacketContractAddress, sendValue.toBigInteger()).encodeFunctionCall()
             val nonce = web3j.ethGetTransactionCount(credentials.address, DefaultBlockParameterName.PENDING).sendAsync().await().let {
@@ -144,5 +161,10 @@ class SendRedPacketViewModel : ViewModel() {
             }
             return redPacketData
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        subscription?.dispose()
     }
 }
