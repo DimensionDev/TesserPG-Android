@@ -174,10 +174,10 @@ interface WalletToken : Persistable, Parcelable {
     @get:Generated
     val dataId: Int
     @get:ForeignKey
-    @get:ManyToOne
+    @get:ManyToOne(cascade = [CascadeAction.NONE])
     var wallet: WalletData
     @get:ForeignKey
-    @get:OneToOne
+    @get:OneToOne(cascade = [CascadeAction.NONE])
     var token: ERC20Token
     var orderIndex: Int
     var tokenBalance: BigDecimal?

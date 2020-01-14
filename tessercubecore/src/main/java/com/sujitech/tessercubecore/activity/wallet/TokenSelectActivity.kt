@@ -12,6 +12,7 @@ import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.data.WalletToken
+import com.sujitech.tessercubecore.data.formatToken
 import com.sujitech.tessercubecore.viewmodel.wallet.TokenSelectViewModel
 import kotlinx.android.synthetic.main.activity_token_select.*
 
@@ -49,7 +50,11 @@ class TokenSelectActivity : AppCompatActivity() {
                 }
                 bindText(R.id.token_value) { token ->
                     token.tokenBalance?.let {
-                        "$it ${token.token.symbol}"
+                        if (token.token.symbol != "ETH") {
+                            "${it.formatToken(true, token.token.decimals)} ${token.token.symbol}"
+                        } else {
+                            "$it ${token.token.symbol}"
+                        }
                     } ?: "0 ${token.token.symbol}"
                 }
                 bindImage(R.id.token_image) {

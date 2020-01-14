@@ -21,6 +21,7 @@ import com.sujitech.tessercubecore.common.extension.toActivity
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.data.WalletToken
+import com.sujitech.tessercubecore.data.formatToken
 import com.sujitech.tessercubecore.viewmodel.wallet.SendRedPacketViewModel
 import com.sujitech.tessercubecore.wallet.BalanceUpdater
 import io.requery.kotlin.eq
@@ -80,7 +81,6 @@ class SendRedPacketActivity : BaseActivity() {
                     selected_token.text = "ETH" // TODO
                 }
             }
-
         }
         commit_button.setOnClickListener {
             commit()
@@ -91,7 +91,7 @@ class SendRedPacketActivity : BaseActivity() {
                 wallet_eth.text = wallet.balance?.formatWei()
             } else {
                 wallet_eth.text = wallet.walletToken.firstOrNull { it.token.address == viewModel.token.value?.token?.address }?.let {
-                    "${it.tokenBalance} ${it.token.symbol}"
+                    "${it.tokenBalance?.formatToken(true, it.token.decimals)} ${it.token.symbol}"
                 }
             }
         }

@@ -1,8 +1,10 @@
 package com.sujitech.tessercubecore.wallet
 
+import com.sujitech.tessercubecore.common.wallet.RedPacketRawPayload
 import com.sujitech.tessercubecore.contracts.generated.HappyRedPacket
-import com.sujitech.tessercubecore.data.RedPacketData
-import com.sujitech.tessercubecore.data.RedPacketStatus
+import com.sujitech.tessercubecore.data.*
+import io.requery.kotlin.eq
+import kotlinx.serialization.json.Json
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 
 class ClaimPendingRedPacketHandler : RedPacketHandler() {
@@ -22,6 +24,22 @@ class ClaimPendingRedPacketHandler : RedPacketHandler() {
         val event = contract.getClaimSuccessEvents(transactionReceipt).first()
         redPacketData.claimAmount = event.claimed_value.toBigDecimal()
         redPacketData.status = RedPacketStatus.claimed
+        if (redPacketData.tokenType == RedPacketTokenType.ERC20 && redPacketData.erC20Token == null) {
+            // Incoming ERC20 token
+            val data = Json.nonstrict.parse(RedPacketRawPayload.serializer(), redPacketData.rawPayload!!)
+            data.token?.let { erC20TokenData ->
+                val erC20Token = DbContext.data.select(ERC20Token::class).where(ERC20Token::address eq erC20TokenData.address).get().firstOrNull()
+                val wallet = DbContext.data.select(WalletData::class).where(WalletData::address eq redPacketData.claimAddress!!).get().firstOrNull()
+                if (wallet != null) { // should not be null
+                    val count = DbContext.data.select(WalletToken::class).where(WalletToken::wallet eq wallet).get().count()
+                    wallet.walletToken.add(WalletTokenEntity().apply {
+                        this.orderIndex = count
+                        this.token = erC20Token
+                        this.wallet = wallet
+                    })
+                }
+            }
+        }
         saveResult(redPacketData)
     }
 
