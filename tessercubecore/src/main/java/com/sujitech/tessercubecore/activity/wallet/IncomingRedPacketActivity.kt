@@ -11,10 +11,12 @@ import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.extension.task
 import com.sujitech.tessercubecore.common.extension.toast
+import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.RedPacketData
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.viewmodel.wallet.ClaimTooLateError
 import com.sujitech.tessercubecore.viewmodel.wallet.IncomingRedPacketViewModel
+import io.requery.kotlin.eq
 import kotlinx.android.synthetic.main.activity_incoming_red_packet.*
 
 class IncomingRedPacketActivity : BaseActivity() {
@@ -38,7 +40,7 @@ class IncomingRedPacketActivity : BaseActivity() {
     }
 
     private val data by lazy {
-        intent.getParcelableExtra<RedPacketData>("data")
+        DbContext.data.select(RedPacketData::class).where(RedPacketData::dataId eq intent.getParcelableExtra<RedPacketData>("data").dataId).get().firstOrNull()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
