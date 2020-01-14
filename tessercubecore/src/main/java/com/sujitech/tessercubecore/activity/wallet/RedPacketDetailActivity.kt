@@ -8,15 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
-import com.sujitech.tessercubecore.common.extension.formatWei
 import com.sujitech.tessercubecore.common.extension.shareText
 import com.sujitech.tessercubecore.common.extension.task
 import com.sujitech.tessercubecore.common.extension.toActivity
 import com.sujitech.tessercubecore.common.wallet.RedPacketPayloadHelper
-import com.sujitech.tessercubecore.data.RedPacketData
-import com.sujitech.tessercubecore.data.RedPacketStatus
+import com.sujitech.tessercubecore.data.*
 import com.sujitech.tessercubecore.viewmodel.wallet.RedPacketClaimerData
 import com.sujitech.tessercubecore.viewmodel.wallet.RedPacketDetailViewModel
+import io.requery.kotlin.eq
 import kotlinx.android.synthetic.main.activity_red_packet_detail.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +25,7 @@ class RedPacketDetailActivity : BaseActivity() {
     private val viewModel by viewModels<RedPacketDetailViewModel>()
 
     private val data by lazy {
-        intent.getParcelableExtra<RedPacketData>("data")
+        DbContext.data.select(RedPacketData::class).where(RedPacketData::dataId eq intent.getParcelableExtra<RedPacketData>("data").dataId).get().firstOrNull()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +45,7 @@ class RedPacketDetailActivity : BaseActivity() {
                     it.address.take(6)
                 }
                 bindText(R.id.claimer_amount) {
-                    it.amount.formatWei()
+                    "${it.amount.formatToken(data.erC20Token != null, data?.erC20Token?.decimals)} ${data.unit}"
                 }
             }
         }

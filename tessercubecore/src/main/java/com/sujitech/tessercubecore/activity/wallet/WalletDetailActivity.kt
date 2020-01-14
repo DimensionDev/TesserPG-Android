@@ -13,6 +13,7 @@ import com.sujitech.tessercubecore.common.extension.shareText
 import com.sujitech.tessercubecore.common.extension.toActivity
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.data.WalletToken
+import com.sujitech.tessercubecore.data.formatToken
 import com.sujitech.tessercubecore.viewmodel.wallet.WalletDetailViewModel
 import kotlinx.android.synthetic.main.activity_wallet_detail.*
 
@@ -44,7 +45,7 @@ class WalletDetailActivity : BaseActivity() {
                     it.token.symbol
                 }
                 bindText(R.id.token_value) {
-                    it.tokenBalance?.toString() ?: "0"
+                    it.tokenBalance?.formatToken(true, it.token.decimals).toString()
                 }
                 bindImage(R.id.token_image) {
                     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${it.token.address}/logo.png"

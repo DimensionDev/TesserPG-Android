@@ -3,12 +3,17 @@ package com.sujitech.tessercubecore.data
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Parcelable
+import com.sujitech.tessercubecore.common.extension.format
 import com.tylersuehr.chips.Chip
 import io.requery.*
 import io.requery.kotlin.eq
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import moe.tlaster.kotlinpgp.data.VerifyStatus
+import org.web3j.utils.Convert
 import java.math.BigDecimal
 import java.util.*
+import kotlin.math.pow
 
 enum class TrustLevel {
     Unknown,
@@ -227,6 +232,28 @@ interface RedPacketData : Persistable, Parcelable {
 val RedPacketData.passwords
     get() = uuids.split(";")
 
+val RedPacketData.actualValue
+    get() = if (erC20Token == null) { //ETH
+        Convert.fromWei(sendTotal.toString(), Convert.Unit.ETHER)
+    } else {
+        sendTotal / 10.0.pow(erC20Token!!.decimals).toBigDecimal()
+    }.format(4)
+
+fun BigDecimal.formatToken(isERC20: Boolean, decimals: Int? = null): BigDecimal {
+    return if (isERC20) {
+        this / 10.0.pow(decimals!!).toBigDecimal()
+    } else {
+        Convert.fromWei(this.toString(), Convert.Unit.ETHER)
+    }
+}
+
+val RedPacketData.unit
+    get() = if (erC20Token == null) { //ETH
+        "ETH"
+    } else {
+        erC20Token!!.symbol
+    }
+
 fun RedPacketData.isFromMe(): Boolean {
     return DbContext.data.select(WalletData::class).where(WalletData::address eq this.senderAddress).get().any()
 }
@@ -236,8 +263,11 @@ enum class RedPacketNetwork {
     Rinkeby
 }
 
+@Serializable
 enum class RedPacketTokenType {
+    @SerialName("eth")
     ETH,
+    @SerialName("erc20")
     ERC20
 }
 

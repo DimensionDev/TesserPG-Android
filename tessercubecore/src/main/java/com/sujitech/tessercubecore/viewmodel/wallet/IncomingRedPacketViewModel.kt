@@ -35,7 +35,7 @@ class IncomingRedPacketViewModel : ViewModel() {
             }
             throw ClaimTooLateError()
         }
-        val currentId = redPacketData.passwords[availability.component3().toInt()]
+        val currentId = redPacketData.passwords[availability.component4().toInt()]
         val data = contract.claim(
                 redPacketId,
                 currentId,
@@ -51,6 +51,7 @@ class IncomingRedPacketViewModel : ViewModel() {
         if (transaction.transactionHash == null) {
             throw TransactionException(transaction.error.message)
         }
+        redPacketData.claimAddress = credentials.address
         redPacketData.claimTransactionHash = transaction.transactionHash
         redPacketData.claimNonce = nonce.toInt()
         redPacketData.claimFunctionCall = data

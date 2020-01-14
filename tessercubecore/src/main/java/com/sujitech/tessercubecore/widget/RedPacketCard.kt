@@ -5,11 +5,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.sujitech.tessercubecore.R
-import com.sujitech.tessercubecore.common.extension.formatWei
 import com.sujitech.tessercubecore.common.prettyTime
-import com.sujitech.tessercubecore.data.RedPacketData
+import com.sujitech.tessercubecore.data.*
 import com.sujitech.tessercubecore.data.RedPacketStatus.*
-import com.sujitech.tessercubecore.data.passwords
 import kotlinx.android.synthetic.main.widget_red_packet_card.view.*
 import java.util.*
 
@@ -43,7 +41,7 @@ class RedPacketCard : FrameLayout {
             red_packet_time.text = prettyTime.format(it)
         }
 
-        red_packet_shares.text = "${value.sendTotal.formatWei()} in total / ${value.passwords.count()} shares"
+        red_packet_shares.text = "${value.actualValue} ${value.unit} in total / ${value.passwords.count()} shares"
 
         red_packet_state.text = when (value.status) {
             initial -> {
@@ -56,7 +54,7 @@ class RedPacketCard : FrameLayout {
                 "Fail to send"
             }
             normal -> {
-                "Sent ${value.sendTotal.formatWei()}"
+                "Sent ${value.actualValue} ${value.unit}"
             }
             incoming -> {
                 "Incoming Red Packet"
@@ -66,8 +64,8 @@ class RedPacketCard : FrameLayout {
             }
             claimed -> {
                 value.claimAmount?.let {
-                    "Got ${it.formatWei()}"
-                } ?: "Got 0 ETH" // TODO
+                    "Got ${it.formatToken(value.erC20Token != null, value.erC20Token?.decimals)} ${value.unit}"
+                } ?: "Got 0 ${value.unit}" // TODO
             }
             expired -> {
                 "Red Packet expired"
@@ -80,8 +78,8 @@ class RedPacketCard : FrameLayout {
             }
             refunded -> {
                 value.refundAmount?.let {
-                    "Refunded ${it.formatWei()}"
-                } ?: "Refunded 0 ETH" // TODO
+                    "Refunded ${it.formatToken(value.erC20Token != null, value.erC20Token?.decimals)} ${value.unit}"
+                } ?: "Refunded 0 ${value.unit}" // TODO
             }
         }
     }

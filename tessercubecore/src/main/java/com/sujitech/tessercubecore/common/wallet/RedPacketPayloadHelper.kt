@@ -4,6 +4,7 @@ import com.sujitech.tessercubecore.BuildConfig
 import com.sujitech.tessercubecore.common.extension.hexStringToByteArray
 import com.sujitech.tessercubecore.data.*
 import io.github.novacrypto.base58.Base58
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -149,9 +150,10 @@ data class RedPacketRawPayload(
         val rpid: String,
         val sender: RedPacketSenderData,
         val total: String,
-        val network: RedPacketNetwork?,
+        val network: RedPacketNetwork? = null,
+        @SerialName("token_type")
         val tokenType: RedPacketTokenType,
-        val token: ERC20TokenData?
+        val token: ERC20TokenData? = null
 )
 
 @Serializable
