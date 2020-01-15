@@ -1,6 +1,9 @@
 package com.sujitech.tessercubecore.activity.wallet
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.observe
@@ -8,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.common.adapter.AutoAdapter
+import com.sujitech.tessercubecore.common.extension.toActivity
 import com.sujitech.tessercubecore.data.ERC20Token
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.viewmodel.wallet.AddTokenViewModel
@@ -51,5 +55,23 @@ class AddTokenActivity : BaseActivity() {
                 }
             }
         }
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.common_add, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item != null) {
+            when (item.itemId) {
+                R.id.menu_add -> {
+                    toActivity<AddCustomTokenActivity>(Intent().putExtra("data", data))
+                    finish()
+                    return true
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

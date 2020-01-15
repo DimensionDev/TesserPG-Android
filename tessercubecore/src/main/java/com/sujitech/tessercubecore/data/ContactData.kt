@@ -162,8 +162,8 @@ interface ERC20Token : Persistable, Parcelable {
     var deletedAt: Date?
     var network: RedPacketNetwork
 
-    @get:OneToOne
-    var walletToken: WalletToken
+    @get:OneToMany
+    val walletToken: MutableList<WalletToken>
     @get:OneToMany
     val redPacketData: MutableList<RedPacketData>
 }
@@ -177,7 +177,7 @@ interface WalletToken : Persistable, Parcelable {
     @get:ManyToOne(cascade = [CascadeAction.NONE])
     var wallet: WalletData
     @get:ForeignKey
-    @get:OneToOne(cascade = [CascadeAction.NONE])
+    @get:ManyToOne(cascade = [CascadeAction.NONE])
     var token: ERC20Token
     var orderIndex: Int
     var tokenBalance: BigDecimal?
@@ -236,12 +236,12 @@ val RedPacketData.actualValue
     get() = if (erC20Token == null) { //ETH
         Convert.fromWei(sendTotal.toString(), Convert.Unit.ETHER)
     } else {
-        sendTotal / 10.0.pow(erC20Token!!.decimals).toBigDecimal()
+        sendTotal.divide(10.0.pow(erC20Token!!.decimals).toBigDecimal())
     }.format(4)
 
 fun BigDecimal.formatToken(isERC20: Boolean, decimals: Int? = null): BigDecimal {
     return if (isERC20) {
-        this / 10.0.pow(decimals!!).toBigDecimal()
+        this.divide(10.0.pow(decimals!!).toBigDecimal())
     } else {
         Convert.fromWei(this.toString(), Convert.Unit.ETHER)
     }

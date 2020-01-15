@@ -16,7 +16,6 @@ class WalletDetailViewModel : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
 
     private lateinit var walletSubscription: Disposable
-    private lateinit var subscription: Disposable
 
     fun loadToken(data: WalletData?) {
         if (data == null) {
@@ -24,17 +23,22 @@ class WalletDetailViewModel : ViewModel() {
         }
         walletSubscription = DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().observableResult().subscribe {
             wallet.value = it.first()
-        }
-        BalanceUpdater.update(DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().first())
-        subscription = DbContext.data.select(WalletToken::class).where(WalletToken::wallet eq data).get().observableResult().subscribe {
+            if (tokens.count() != it.first().walletToken.count()) {
+                BalanceUpdater.update(DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().first())
+            }
             tokens.clear()
-            tokens.addAll(it)
+            tokens.addAll(it.first().walletToken)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        subscription.dispose()
         walletSubscription.dispose()
+    }
+
+    fun deleteToken(item: WalletToken) {
+        item.wallet.walletToken.remove(item)
+        DbContext.data.update(item.wallet).blockingGet()
+        DbContext.data.delete(item).blockingGet()
     }
 }

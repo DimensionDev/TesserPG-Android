@@ -18,10 +18,7 @@ import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.extension.formatWei
 import com.sujitech.tessercubecore.common.extension.task
 import com.sujitech.tessercubecore.common.extension.toActivity
-import com.sujitech.tessercubecore.data.DbContext
-import com.sujitech.tessercubecore.data.WalletData
-import com.sujitech.tessercubecore.data.WalletToken
-import com.sujitech.tessercubecore.data.formatToken
+import com.sujitech.tessercubecore.data.*
 import com.sujitech.tessercubecore.viewmodel.wallet.SendRedPacketViewModel
 import com.sujitech.tessercubecore.wallet.BalanceUpdater
 import io.requery.kotlin.eq
@@ -60,7 +57,7 @@ class SendRedPacketActivity : BaseActivity() {
         selected_token.text = "ETH" // TODO
         viewModel.token.observe(this, Observer {
             selected_token.text = it?.token?.symbol ?: "ETH"
-            wallet_eth.text = "${it?.tokenBalance ?: 0} ${it?.token?.symbol}"
+            wallet_eth.text = "${it?.tokenBalance?.formatToken(selected_token.text != "ETH", it?.token?.decimals) ?: 0} ${it?.token?.symbol}"
         })
         selected_token.setOnClickListener {
             startActivityForResult(Intent(this, TokenSelectActivity::class.java)
@@ -142,7 +139,18 @@ class SendRedPacketActivity : BaseActivity() {
         }
         if (requestCode == TOKEN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data.getParcelableExtra<WalletToken>("data")?.let {
-                viewModel.token.value = DbContext.data.select(WalletToken::class).where(WalletToken::dataId eq it.dataId).get().first()
+                if (it.dataId != null && it.dataId != 0) {
+                    viewModel.token.value = DbContext.data.select(WalletToken::class).where(WalletToken::dataId eq it.dataId).get().first()
+                } else {
+                    viewModel.token.value = WalletTokenEntity().apply {
+                        this.wallet = wallet_spinner.selectedItem as WalletData
+                        this.tokenBalance = (wallet_spinner.selectedItem as WalletData).balance
+                        this.token = ERC20TokenEntity().apply {
+                            this.symbol = "ETH"
+                            this.name = "ETH"
+                        }
+                    }
+                }
             }
         }
     }

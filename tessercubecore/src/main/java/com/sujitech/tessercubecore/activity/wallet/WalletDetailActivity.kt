@@ -2,7 +2,10 @@ package com.sujitech.tessercubecore.activity.wallet
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import androidx.activity.viewModels
+import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujitech.tessercubecore.R
@@ -45,11 +48,30 @@ class WalletDetailActivity : BaseActivity() {
                     it.token.symbol
                 }
                 bindText(R.id.token_value) {
-                    it.tokenBalance?.formatToken(true, it.token.decimals).toString()
+                    (it.tokenBalance?.formatToken(true, it.token.decimals) ?: 0).toString()
                 }
                 bindImage(R.id.token_image) {
                     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${it.token.address}/logo.png"
                 }
+                itemClicked.observe(this@WalletDetailActivity, Observer { args ->
+                    PopupMenu(args.view.context, args.view).apply {
+                        this.gravity = Gravity.END
+                        inflate(R.menu.me_user_wallet_recycler_view)
+                        setOnMenuItemClickListener {
+                            when (it.itemId) {
+                                R.id.menu_share_address -> {
+                                    shareText(args.item.token.address)
+                                    true
+                                }
+                                R.id.menu_delete -> {
+                                    viewModel.deleteToken(args.item)
+                                    true
+                                }
+                                else -> false
+                            }
+                        }
+                    }.show()
+                })
             }
         }
         viewModel.loadToken(data)

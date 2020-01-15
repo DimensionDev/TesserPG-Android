@@ -7,7 +7,6 @@ import android.widget.FrameLayout
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.common.prettyTime
 import com.sujitech.tessercubecore.data.*
-import com.sujitech.tessercubecore.data.RedPacketStatus.*
 import kotlinx.android.synthetic.main.widget_red_packet_card.view.*
 import java.util.*
 
@@ -32,51 +31,52 @@ class RedPacketCard : FrameLayout {
             return
         }
 
-        red_packet_sender.text = "${value.senderName}(${value.senderAddress})"
+        red_packet_sender.text = "From: ${value.senderName}"
 
         value.blockCreationTime?.let {
             Date(it * 1000)
         }?.let {
-            // TODO: do not format older than 1 hour
+            // TODO: do not format older than 7 days
             red_packet_time.text = prettyTime.format(it)
         }
 
         red_packet_shares.text = "${value.actualValue} ${value.unit} in total / ${value.passwords.count()} shares"
+        red_packet_message.text = value.sendMessage
 
-        red_packet_state.text = when (value.status) {
-            initial -> {
+        red_packet_state2.text = when (value.status) {
+            RedPacketStatus.initial -> {
                 "Ready to send"
             }
-            pending -> {
+            RedPacketStatus.pending -> {
                 "Sending..."
             }
-            fail -> {
+            RedPacketStatus.fail -> {
                 "Fail to send"
             }
-            normal -> {
+            RedPacketStatus.normal -> {
                 "Sent ${value.actualValue} ${value.unit}"
             }
-            incoming -> {
+            RedPacketStatus.incoming -> {
                 "Incoming Red Packet"
             }
-            claimPending -> {
+            RedPacketStatus.claimPending -> {
                 "Claiming"
             }
-            claimed -> {
+            RedPacketStatus.claimed -> {
                 value.claimAmount?.let {
                     "Got ${it.formatToken(value.erC20Token != null, value.erC20Token?.decimals)} ${value.unit}"
                 } ?: "Got 0 ${value.unit}" // TODO
             }
-            expired -> {
+            RedPacketStatus.expired -> {
                 "Red Packet expired"
             }
-            empty -> {
+            RedPacketStatus.empty -> {
                 "Too late to get any"
             }
-            refundPending -> {
+            RedPacketStatus.refundPending -> {
                 "Refunding..."
             }
-            refunded -> {
+            RedPacketStatus.refunded -> {
                 value.refundAmount?.let {
                     "Refunded ${it.formatToken(value.erC20Token != null, value.erC20Token?.decimals)} ${value.unit}"
                 } ?: "Refunded 0 ${value.unit}" // TODO

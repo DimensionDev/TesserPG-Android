@@ -5,12 +5,14 @@ import android.view.Menu
 import android.view.MenuItem
 import com.sujitech.tessercubecore.R
 import com.sujitech.tessercubecore.activity.BaseActivity
+import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.RedPacketData
+import io.requery.kotlin.eq
 import kotlinx.android.synthetic.main.activity_send_red_packet_finish.*
 
 class SendRedPacketFinishActivity : BaseActivity() {
     private val data by lazy {
-        intent.getParcelableExtra<RedPacketData>("data")
+        DbContext.data.select(RedPacketData::class).where(RedPacketData::dataId eq intent.getParcelableExtra<RedPacketData>("data").dataId).get().firstOrNull()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

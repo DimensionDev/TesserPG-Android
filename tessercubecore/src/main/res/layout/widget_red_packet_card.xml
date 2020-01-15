@@ -1,59 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#f53416"
-    android:padding="8dp">
+    android:background="#f7a051">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#fef4ea"
+        app:layout_constraintBottom_toBottomOf="@id/red_packet_sender"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/red_packet_sender"
+        style="@style/TextAppearance.AppCompat.Body2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#fed233"
+        android:padding="8dp"
+        android:textColor="#ed4e36"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Sender" />
 
     <TextView
-        android:id="@+id/red_packet_state"
+        android:id="@+id/red_packet_state2"
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textColor="#ed4e36"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="State2" />
+
+    <TextView
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:id="@+id/red_packet_message"
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#fed233"
+        android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/red_packet_sender"
         tools:text="State" />
 
     <TextView
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
         android:id="@+id/red_packet_shares"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColor="#fed233"
+        android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/red_packet_state"
+        app:layout_constraintTop_toBottomOf="@id/red_packet_message"
         tools:text="Price" />
 
     <TextView
+        android:padding="8dp"
         android:id="@+id/red_packet_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#fed233"
+        android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/red_packet_shares"
         tools:text="Time" />
 
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/red_packet_state2"
-        tools:text="State2"
-        android:textColor="#fed233"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

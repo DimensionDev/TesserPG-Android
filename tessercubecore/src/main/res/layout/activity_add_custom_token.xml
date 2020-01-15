@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.wallet.AddCustomTokenActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/ToolBar.WithBackIcon"
+        app:title="Add Custom Token" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/token_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Token Address"
+            tools:text="0x4h73rnhedusahfneu8w9" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:textColor="?android:attr/textColorPrimaryNoDisable"
+            android:id="@+id/token_name"
+            android:enabled="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Token Name"
+            tools:text="0x4h73rnhedusahfneu8w9" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:textColor="?android:attr/textColorPrimaryNoDisable"
+            android:enabled="false"
+            android:id="@+id/token_symbol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Token Symbol"
+            android:inputType="none"
+            tools:text="0x4h73rnhedusahfneu8w9" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:textColor="?android:attr/textColorPrimaryNoDisable"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:enabled="false"
+            android:id="@+id/token_decimals"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Token Decimals"
+            android:inputType="none"
+            tools:text="0x4h73rnhedusahfneu8w9" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:enabled="false"
+        android:id="@+id/commit_button"
+        android:textAllCaps="false"
+        android:text="Finish"
+        android:layout_margin="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

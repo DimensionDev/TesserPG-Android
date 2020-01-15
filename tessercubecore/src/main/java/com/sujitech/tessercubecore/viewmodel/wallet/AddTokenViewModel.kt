@@ -47,6 +47,9 @@ class AddTokenViewModel : ViewModel() {
             it.wallet = wallet
         }.let {
             DbContext.data.insert(it).blockingGet()
+        }.let {
+            wallet.walletToken.add(it)
+            DbContext.data.update(wallet).blockingGet()
         }
     }
 }

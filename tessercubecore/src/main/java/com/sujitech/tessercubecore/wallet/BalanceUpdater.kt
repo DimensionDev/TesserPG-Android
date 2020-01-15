@@ -27,12 +27,16 @@ object BalanceUpdater {
                 val password = UserPasswordStorage.get(appContext, wallet.passwordId)
                 val credential = WalletUtils.loadBip39Credentials(password, mnemonic)
                 wallet.walletToken.forEach {
-                    it.tokenBalance = IERC20.load(
-                            it.token.address,
-                            web3j,
-                            credential,
-                            getDefaultGasProvider()
-                    ).balanceOf(wallet.address).sendAsync().await().toBigDecimal()
+                    try {
+                        it.tokenBalance = IERC20.load(
+                                it.token.address,
+                                web3j,
+                                credential,
+                                getDefaultGasProvider()
+                        ).balanceOf(wallet.address).sendAsync().await().toBigDecimal()
+                    } catch (e: Error) {
+                        e.printStackTrace()
+                    }
                 }
                 withContext(Dispatchers.Main) {
                     DbContext.data.update(wallet).blockingGet()
