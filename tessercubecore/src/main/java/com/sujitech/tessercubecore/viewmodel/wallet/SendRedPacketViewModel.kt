@@ -115,6 +115,7 @@ class SendRedPacketViewModel : ViewModel() {
                 this.network = currentEthNetworkType
                 this.sendTotal = weiValue.toBigDecimal() //TODO
                 this.password = uuid
+                this.shares = shares.toInt()
 //                this.uuids = uuids.joinToString(";")
                 this.contractVersion = defaultContractVersion
                 this.aesVersion = defaultAESVersion
@@ -154,6 +155,7 @@ class SendRedPacketViewModel : ViewModel() {
                 this.senderName = senderName
                 this.sendTotal = sendValue //TODO
                 this.password = uuid
+                this.shares = shares.toInt()
 //                this.uuids = uuids.joinToString(";")
                 this.contractVersion = defaultContractVersion
                 this.aesVersion = defaultAESVersion
