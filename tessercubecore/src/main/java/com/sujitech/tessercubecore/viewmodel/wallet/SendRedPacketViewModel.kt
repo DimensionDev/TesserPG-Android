@@ -67,9 +67,10 @@ class SendRedPacketViewModel : ViewModel() {
     ): RedPacketData {
         val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
         val contractGasProvider = getDefaultGasProvider()
-        val uuids = (0 until shares).map {
-            UUID.randomUUID().toString()
-        }
+        val uuid = UUID.randomUUID().toString()
+//        val uuids = (0 until shares).map {
+//            UUID.randomUUID().toString()
+//        }
         val type = token.value?.token?.symbol ?: "ETH"
         val web3j = currentEthNetworkType.web3j
         val result = if (type == "ETH") {
@@ -80,7 +81,10 @@ class SendRedPacketViewModel : ViewModel() {
                     contractGasProvider)
             val weiValue = Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger()
             val data = contract.create_red_packet(
-                    uuids.map { it.sha3Hex() },
+                    uuid.sha3Hex(),
+                    shares.toBigInteger(),
+//                    uuids.map { it.sha3Hex() }.first(),
+//                    uuids.count().toBigInteger(),
                     isRandom,
                     defaultRedPacketDuration.toBigInteger(),//TODO
                     Hash.sha3("seed".toByteArray()),
@@ -110,7 +114,8 @@ class SendRedPacketViewModel : ViewModel() {
                 this.senderName = senderName
                 this.network = currentEthNetworkType
                 this.sendTotal = weiValue.toBigDecimal() //TODO
-                this.uuids = uuids.joinToString(";")
+                this.password = uuid
+//                this.uuids = uuids.joinToString(";")
                 this.contractVersion = defaultContractVersion
                 this.aesVersion = defaultAESVersion
                 this.status = RedPacketStatus.pending
@@ -148,7 +153,8 @@ class SendRedPacketViewModel : ViewModel() {
                 this.senderAddress = credentials.address
                 this.senderName = senderName
                 this.sendTotal = sendValue //TODO
-                this.uuids = uuids.joinToString(";")
+                this.password = uuid
+//                this.uuids = uuids.joinToString(";")
                 this.contractVersion = defaultContractVersion
                 this.aesVersion = defaultAESVersion
                 this.status = RedPacketStatus.pending

@@ -5,7 +5,10 @@ import com.sujitech.tessercubecore.common.extension.await
 import com.sujitech.tessercubecore.common.extension.hexStringToByteArray
 import com.sujitech.tessercubecore.common.wallet.*
 import com.sujitech.tessercubecore.contracts.generated.HappyRedPacket
-import com.sujitech.tessercubecore.data.*
+import com.sujitech.tessercubecore.data.DbContext
+import com.sujitech.tessercubecore.data.RedPacketData
+import com.sujitech.tessercubecore.data.RedPacketStatus
+import com.sujitech.tessercubecore.data.WalletData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.web3j.crypto.Hash
@@ -36,7 +39,8 @@ class IncomingRedPacketViewModel : ViewModel() {
             }
             throw ClaimTooLateError()
         }
-        val currentId = redPacketData.passwords[availability.component4().toInt()]
+        val currentId = redPacketData.password
+//        val currentId = redPacketData.passwords[availability.component4().toInt()]
         val data = contract.claim(
                 redPacketId,
                 currentId,

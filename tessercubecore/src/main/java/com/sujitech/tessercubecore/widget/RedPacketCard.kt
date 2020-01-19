@@ -40,7 +40,7 @@ class RedPacketCard : FrameLayout {
             red_packet_time.text = prettyTime.format(it)
         }
 
-        red_packet_shares.text = "${value.actualValue} ${value.unit} in total / ${value.passwords.count()} shares"
+        red_packet_shares.text = "${value.actualValue} ${value.unit} in total / ${value.shares} shares"
         red_packet_message.text = value.sendMessage
 
         red_packet_state2.text = when (value.status) {

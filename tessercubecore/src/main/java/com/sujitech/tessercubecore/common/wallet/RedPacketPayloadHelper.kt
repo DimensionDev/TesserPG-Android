@@ -61,7 +61,8 @@ object RedPacketPayloadHelper {
             this.senderAddress = data.sender.address
             this.senderName = data.sender.name
             this.sendTotal = data.total.toBigDecimal()
-            this.uuids = data.passwords.joinToString(";")
+            this.password = data.password
+//            this.uuids = data.passwords.joinToString(";")
             this.contractVersion = data.contract_version
             this.aesVersion = defaultAESVersion//TODO
             this.status = RedPacketStatus.incoming
@@ -118,7 +119,8 @@ fun RedPacketData.toRawPayload(): RedPacketRawPayload {
             blockCreationTime!!,
             duration,
             isRandom,
-            passwords,
+            password,
+            shares,
             redPacketId!!,
             RedPacketSenderData(
                     senderAddress,
@@ -158,7 +160,8 @@ data class RedPacketRawPayload(
         val creation_time: Long,
         val duration: Long,
         val is_random: Boolean,
-        val passwords: List<String>,
+        val password: String,
+        val shares: Int,
         val rpid: String,
         val sender: RedPacketSenderData,
         val total: String,

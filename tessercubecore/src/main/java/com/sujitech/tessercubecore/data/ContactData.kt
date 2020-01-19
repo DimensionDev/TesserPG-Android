@@ -214,9 +214,8 @@ interface RedPacketData : Persistable, Parcelable {
     var aesVersion: Int
     var contractVersion: Int
     var contractAddress: String
-
-    // Split by ;
-    var uuids: String
+    var password: String
+    var shares: Int
     var isRandom: Boolean
     var failReason: String?
     var createNonce: Int?
@@ -252,8 +251,8 @@ interface RedPacketData : Persistable, Parcelable {
     var erc20ApproveResult: BigDecimal?
 }
 
-val RedPacketData.passwords
-    get() = uuids.split(";")
+//val RedPacketData.passwords
+//    get() = uuids.split(";")
 
 val RedPacketData.actualValue
     get() = if (erC20Token == null) { //ETH

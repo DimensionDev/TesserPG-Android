@@ -9,7 +9,10 @@ import com.sujitech.tessercubecore.common.extension.toJson
 import com.sujitech.tessercubecore.common.wallet.*
 import com.sujitech.tessercubecore.contracts.generated.HappyRedPacket
 import com.sujitech.tessercubecore.contracts.generated.IERC20
-import com.sujitech.tessercubecore.data.*
+import com.sujitech.tessercubecore.data.DbContext
+import com.sujitech.tessercubecore.data.RedPacketData
+import com.sujitech.tessercubecore.data.RedPacketStatus
+import com.sujitech.tessercubecore.data.WalletData
 import org.web3j.crypto.Hash
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
@@ -64,7 +67,10 @@ class ERC20PendingRedPacketHandler : RedPacketHandler() {
         val event = erc20.getApprovalEvents(transactionReceipt).first()
         redPacketData.erc20ApproveResult = event.value.toBigDecimal()
         val data = contract.create_red_packet(
-                redPacketData.passwords.map { it.sha3Hex() },
+                redPacketData.password.sha3Hex(),
+                redPacketData.shares.toBigInteger(),
+//                redPacketData.passwords.map { it.sha3Hex() }.first(),
+//                redPacketData.passwords.count().toBigInteger(),
                 redPacketData.isRandom,
                 defaultRedPacketDuration.toBigInteger(),//TODO
                 Hash.sha3("seed".toByteArray()),

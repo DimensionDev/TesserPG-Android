@@ -1,7 +1,6 @@
 package com.sujitech.tessercubecore.viewmodel.wallet
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.sujitech.tessercubecore.appContext
 import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.collection.ObservableCollection
@@ -15,7 +14,6 @@ import com.sujitech.tessercubecore.data.RedPacketStatus
 import com.sujitech.tessercubecore.data.WalletData
 import io.requery.kotlin.eq
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
@@ -32,36 +30,36 @@ class RedPacketDetailViewModel : ViewModel() {
         if (data == null) {
             return
         }
-        val wallet = DbContext.data.select(WalletData::class).get().firstOrNull() ?: return
-        val walletPassword = UserPasswordStorage.get(appContext, wallet.passwordId)
-        val walletMnemonic = UserPasswordStorage.get(appContext, wallet.mnemonicId)
-        viewModelScope.launch {
-            val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
-            val contractGasProvider = getDefaultGasProvider()
-            val web3j = data.network.web3j
-            val contract = HappyRedPacket.load(
-                    data.contractAddress,
-                    web3j,
-                    credentials,
-                    contractGasProvider)
-            val result = contract.check_claimed_list(data.redPacketId!!.hexStringToByteArray()).sendAsync().await()
-            if (result.component1().count() != result.component2().count()) {
-                return@launch
-            }
-            if (!result.component1().any()) {
-                return@launch
-            }
-            result.component1().mapIndexed { index, bigInteger ->
-                RedPacketClaimerData(
-                        result.component2()[index],
-                        "", //TODO
-                        bigInteger.toBigDecimal()
-                )
-            }.let {
-                claimers.addAll(it)
-            }
-            web3j.shutdown()
-        }
+//        val wallet = DbContext.data.select(WalletData::class).get().firstOrNull() ?: return
+//        val walletPassword = UserPasswordStorage.get(appContext, wallet.passwordId)
+//        val walletMnemonic = UserPasswordStorage.get(appContext, wallet.mnemonicId)
+//        viewModelScope.launch {
+//            val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
+//            val contractGasProvider = getDefaultGasProvider()
+//            val web3j = data.network.web3j
+//            val contract = HappyRedPacket.load(
+//                    data.contractAddress,
+//                    web3j,
+//                    credentials,
+//                    contractGasProvider)
+//            val result = contract.check_claimed_list(data.redPacketId!!.hexStringToByteArray()).sendAsync().await()
+//            if (result.component1().count() != result.component2().count()) {
+//                return@launch
+//            }
+//            if (!result.component1().any()) {
+//                return@launch
+//            }
+//            result.component1().mapIndexed { index, bigInteger ->
+//                RedPacketClaimerData(
+//                        result.component2()[index],
+//                        "", //TODO
+//                        bigInteger.toBigDecimal()
+//                )
+//            }.let {
+//                claimers.addAll(it)
+//            }
+//            web3j.shutdown()
+//        }
     }
 
     suspend fun refund(data: RedPacketData?): RedPacketData? {
