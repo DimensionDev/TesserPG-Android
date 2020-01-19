@@ -62,6 +62,7 @@ object RedPacketPayloadHelper {
             this.senderName = data.sender.name
             this.sendTotal = data.total.toBigDecimal()
             this.password = data.password
+            this.shares = data.shares
 //            this.uuids = data.passwords.joinToString(";")
             this.contractVersion = data.contract_version
             this.aesVersion = defaultAESVersion//TODO
