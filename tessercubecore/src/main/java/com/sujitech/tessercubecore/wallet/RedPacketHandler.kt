@@ -1,5 +1,6 @@
 package com.sujitech.tessercubecore.wallet
 
+import android.util.Log
 import com.sujitech.tessercubecore.common.extension.await
 import com.sujitech.tessercubecore.common.wallet.*
 import com.sujitech.tessercubecore.contracts.generated.HappyRedPacket
@@ -16,6 +17,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt
 abstract class RedPacketHandler: IRedPacketHandler {
     override suspend fun processingRedPacket(redPacketData: RedPacketData, contract: HappyRedPacket) {
         val transactionHash = getTransactionHash(redPacketData)
+        val web3j = redPacketData.network.web3j
         val transactionReceipt = tryGetTransactionReceipt(web3j, transactionHash) ?: return
         if (transactionReceipt.isStatusOK) {
             onSuccess(contract, redPacketData, transactionReceipt)
@@ -32,6 +34,7 @@ abstract class RedPacketHandler: IRedPacketHandler {
                     functionCall), DefaultBlockParameterName.LATEST).sendAsync().await()
             onRevert(redPacketData, ethCall.revertReason)
         }
+        web3j.shutdown()
     }
 
     protected suspend fun saveResult(redPacketData: RedPacketData) {
@@ -48,6 +51,7 @@ abstract class RedPacketHandler: IRedPacketHandler {
 
     private suspend fun tryGetTransactionReceipt(web3j: Web3j, transactionHash: String): TransactionReceipt? {
         for (i in (0 until retryCount)) {
+            Log.i("RedPacketHandler", "Trying get receipt from: $transactionHash for the $i time(s)")
             val ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(transactionHash).sendAsync().await()
             if (ethGetTransactionReceipt.transactionReceipt.isPresent) {
                 return ethGetTransactionReceipt.transactionReceipt.get()

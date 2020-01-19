@@ -73,7 +73,7 @@ class SendRedPacketActivity : BaseActivity() {
                 viewModel.wallets.get(position)?.let {
                     BalanceUpdater.update(it)
                 }
-                viewModel.wallets.get(position)?.balance?.let {
+                viewModel.wallets.get(position)?.currentBalance?.let {
                     wallet_eth.text = it.formatWei()
                     selected_token.text = "ETH" // TODO
                 }
@@ -85,7 +85,7 @@ class SendRedPacketActivity : BaseActivity() {
         viewModel.updateTime.observe(this) {
             val wallet = viewModel.wallets.get(wallet_spinner.selectedItemPosition)
             if (viewModel.token.value?.token?.symbol ?: "ETH" == "ETH") {
-                wallet_eth.text = wallet.balance?.formatWei()
+                wallet_eth.text = wallet.currentBalance?.formatWei()
             } else {
                 wallet_eth.text = wallet.walletToken.firstOrNull { it.token.address == viewModel.token.value?.token?.address }?.let {
                     "${it.tokenBalance?.formatToken(true, it.token.decimals)} ${it.token.symbol}"
@@ -144,7 +144,7 @@ class SendRedPacketActivity : BaseActivity() {
                 } else {
                     viewModel.token.value = WalletTokenEntity().apply {
                         this.wallet = wallet_spinner.selectedItem as WalletData
-                        this.tokenBalance = (wallet_spinner.selectedItem as WalletData).balance
+                        this.tokenBalance = (wallet_spinner.selectedItem as WalletData).currentBalance
                         this.token = ERC20TokenEntity().apply {
                             this.symbol = "ETH"
                             this.name = "ETH"

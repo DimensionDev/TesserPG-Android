@@ -9,9 +9,11 @@ import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.common.extension.getClipboardText
 import com.sujitech.tessercubecore.common.extension.toActivity
 import com.sujitech.tessercubecore.common.wallet.RedPacketPayloadHelper
-import com.sujitech.tessercubecore.data.DbContext
-import com.sujitech.tessercubecore.data.RedPacketStatus
+import com.sujitech.tessercubecore.common.wallet.RedPacketRawPayload
+import com.sujitech.tessercubecore.data.*
+import io.requery.kotlin.eq
 import kotlinx.android.synthetic.main.activity_open_red_packet.*
+import kotlinx.serialization.json.Json
 
 class OpenRedPacketActivity : BaseActivity() {
 
@@ -54,7 +56,7 @@ class OpenRedPacketActivity : BaseActivity() {
             return
         }
         val unpacked = RedPacketPayloadHelper.unpack(content)
-        val data = RedPacketPayloadHelper.parse(unpacked)
+        val data = checkIsCustomToken(RedPacketPayloadHelper.parse(unpacked))
         data.status = RedPacketStatus.incoming
         DbContext.data.insert(data).blockingGet().let {
             toActivity<IncomingRedPacketActivity>(Intent().apply {
@@ -63,4 +65,28 @@ class OpenRedPacketActivity : BaseActivity() {
             finish()
         }
     }
+
+    private fun checkIsCustomToken(redPacketData: RedPacketData): RedPacketData {
+        val data = Json.nonstrict.parse(RedPacketRawPayload.serializer(), redPacketData.rawPayload!!)
+        val erC20TokenData = data.token
+        if (erC20TokenData != null) {
+            redPacketData.tokenType = RedPacketTokenType.ERC20
+            val erC20Token = DbContext.data.select(ERC20Token::class).where(ERC20Token::address eq erC20TokenData.address).get().firstOrNull()
+            if (erC20Token == null) {
+                val tokenEntity = ERC20TokenEntity().apply {
+                    address = erC20TokenData.address
+                    this.name = erC20TokenData.name
+                    this.symbol = erC20TokenData.symbol
+                    this.decimals = erC20TokenData.decimals
+                    this.isUserDefine = true
+                    this.network = data.network
+                }
+                redPacketData.erC20Token = DbContext.data.insert(tokenEntity).blockingGet()
+            } else {
+                redPacketData.erC20Token = erC20Token
+            }
+        }
+        return redPacketData
+    }
+
 }

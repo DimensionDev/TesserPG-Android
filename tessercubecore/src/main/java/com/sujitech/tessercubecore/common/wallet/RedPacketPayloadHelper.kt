@@ -4,12 +4,12 @@ import com.sujitech.tessercubecore.BuildConfig
 import com.sujitech.tessercubecore.common.extension.hexStringToByteArray
 import com.sujitech.tessercubecore.data.*
 import io.github.novacrypto.base58.Base58
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.SerialClassDescImpl
 import kotlinx.serialization.json.Json
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.web3j.tx.ChainIdLong
 import java.io.ByteArrayOutputStream
+import java.math.BigDecimal
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import javax.crypto.Cipher
@@ -68,6 +68,7 @@ object RedPacketPayloadHelper {
             this.redPacketId = data.rpid
             this.encPayload = value
             this.rawPayload = raw
+            this.network = data.network
         }
     }
 
@@ -109,6 +110,7 @@ object RedPacketPayloadHelper {
 }
 
 
+
 fun RedPacketData.toRawPayload(): RedPacketRawPayload {
     return RedPacketRawPayload(
             contractAddress,
@@ -123,11 +125,8 @@ fun RedPacketData.toRawPayload(): RedPacketRawPayload {
                     sendMessage,
                     senderName
             ),
-            sendTotal.toString(),
-            network = when (ethChainID) {
-                ChainIdLong.RINKEBY -> RedPacketNetwork.Rinkeby
-                else -> null
-            },
+            sendTotal.toPlainString(),
+            network = this.network,
             token = erC20Token?.toTokenData(),
             tokenType = tokenType
     )
@@ -137,6 +136,19 @@ private fun ERC20Token.toTokenData(): ERC20TokenData {
     return ERC20TokenData(
             address, name, decimals, symbol
     )
+}
+
+@Serializer(forClass = BigDecimal::class)
+object BigDecimalSerializer: KSerializer<BigDecimal> {
+    override val descriptor: SerialDescriptor = SerialClassDescImpl("BigDecimal")
+
+    override fun serialize(encoder: Encoder, obj: BigDecimal) {
+        encoder.encodeString(obj.toPlainString())
+    }
+
+    override fun deserialize(decoder: Decoder): BigDecimal {
+        return BigDecimal(decoder.decodeString())
+    }
 }
 
 @Serializable
@@ -150,7 +162,7 @@ data class RedPacketRawPayload(
         val rpid: String,
         val sender: RedPacketSenderData,
         val total: String,
-        val network: RedPacketNetwork? = null,
+        val network: RedPacketNetwork = RedPacketNetwork.Mainnet,
         @SerialName("token_type")
         val tokenType: RedPacketTokenType,
         val token: ERC20TokenData? = null

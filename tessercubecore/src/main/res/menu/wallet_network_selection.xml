@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:id="@+id/menu_network_group"
+        android:checkableBehavior="single">
+        <item android:id="@+id/menu_network_mainnet"
+            android:title="Mainnet"/>
+        <item android:id="@+id/menu_network_rinkeby"
+            android:title="Rinkeby"/>
+        <item android:id="@+id/menu_network_ropsten"
+            android:title="Ropsten"/>
+    </group>
+</menu>

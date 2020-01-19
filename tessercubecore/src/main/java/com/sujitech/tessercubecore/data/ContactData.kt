@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Parcelable
 import com.sujitech.tessercubecore.common.extension.format
+import com.sujitech.tessercubecore.common.wallet.currentEthNetworkType
 import com.tylersuehr.chips.Chip
 import io.requery.*
 import io.requery.kotlin.eq
@@ -141,13 +142,35 @@ interface WalletData : Persistable, Parcelable {
     var passwordId: String
     var mnemonicId: String
     /**
-     * ETH balance
+     * ETH Mainnet balance
      */
     var balance: BigDecimal?
+
+    /**
+     * ETH Rinkeby balance
+     */
+    var rinkebyBalance: BigDecimal?
+
+    var ropstenBalance: BigDecimal?
 
     @get:OneToMany
     val walletToken: MutableList<WalletToken>
 }
+
+fun WalletData.updateBalance(network: RedPacketNetwork, bigDecimal: BigDecimal) {
+    when (network) {
+        RedPacketNetwork.Mainnet -> balance = bigDecimal
+        RedPacketNetwork.Rinkeby -> rinkebyBalance = bigDecimal
+        RedPacketNetwork.Ropsten -> ropstenBalance = bigDecimal
+    }
+}
+
+val WalletData.currentBalance
+    get() = when (currentEthNetworkType) {
+        RedPacketNetwork.Mainnet -> this.balance
+        RedPacketNetwork.Rinkeby -> this.rinkebyBalance
+        RedPacketNetwork.Ropsten -> this.ropstenBalance
+    }
 
 @Entity
 interface ERC20Token : Persistable, Parcelable {
@@ -260,7 +283,8 @@ fun RedPacketData.isFromMe(): Boolean {
 
 enum class RedPacketNetwork {
     Mainnet,
-    Rinkeby
+    Rinkeby,
+    Ropsten
 }
 
 @Serializable

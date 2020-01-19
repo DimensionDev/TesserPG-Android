@@ -31,7 +31,7 @@ class RedPacketCard : FrameLayout {
             return
         }
 
-        red_packet_sender.text = "From: ${value.senderName}"
+        red_packet_sender.text = "From: ${value.senderName} (${value.network?.name})"
 
         value.blockCreationTime?.let {
             Date(it * 1000)

@@ -1,5 +1,6 @@
 package com.sujitech.tessercubecore.wallet
 
+import android.util.Log
 import com.sujitech.tessercubecore.appContext
 import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.extension.await
@@ -29,9 +30,12 @@ class PendingRedPacketHandler : IRedPacketHandler {
     }
 
     override suspend fun processingRedPacket(redPacketData: RedPacketData, contract: HappyRedPacket) {
+        Log.i("PendingRedPacketHandler", "Processing pending red packet")
         if (redPacketData.creationTransactionHash == null && redPacketData.erC20Token != null) {
+            Log.i("PendingRedPacketHandler", "Processing erc20 token")
             erc20Handler.processingRedPacket(redPacketData, contract)
         } else {
+            Log.i("PendingRedPacketHandler", "Processing eth")
             ethHandler.processingRedPacket(redPacketData, contract)
         }
     }
@@ -55,6 +59,7 @@ class ERC20PendingRedPacketHandler : RedPacketHandler() {
         val mnemonic = UserPasswordStorage.get(appContext, wallet.mnemonicId)
         val password = UserPasswordStorage.get(appContext, wallet.passwordId)
         val credential = WalletUtils.loadBip39Credentials(password, mnemonic)
+        val web3j = redPacketData.network.web3j
         val erc20 = IERC20.load(redPacketData.erC20Token!!.address, web3j, credential, getDefaultGasProvider())
         val event = erc20.getApprovalEvents(transactionReceipt).first()
         redPacketData.erc20ApproveResult = event.value.toBigDecimal()
@@ -74,7 +79,7 @@ class ERC20PendingRedPacketHandler : RedPacketHandler() {
             it.transactionCount
         }
         val rawTransaction = RawTransaction.createTransaction(nonce, defaultGasPrice, defaultGasLimit, contract.contractAddress, data)
-        val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, ethChainID, credential)
+        val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, redPacketData.network.ethChainID, credential)
         val transaction = web3j.ethSendRawTransaction(Numeric.toHexString(signedRawTransaction)).sendAsync().await()
         if (transaction.transactionHash == null) {
             throw TransactionException(transaction.error.message)
@@ -84,6 +89,7 @@ class ERC20PendingRedPacketHandler : RedPacketHandler() {
         redPacketData.creationFunctionCall = data
         saveResult(redPacketData)
         RedPacketUpdater.put(redPacketData)
+        web3j.shutdown()
     }
 
     override suspend fun onRevert(redPacketData: RedPacketData, revertReason: String?) {

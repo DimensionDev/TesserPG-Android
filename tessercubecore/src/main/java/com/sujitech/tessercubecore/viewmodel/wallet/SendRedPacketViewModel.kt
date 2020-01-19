@@ -71,9 +71,10 @@ class SendRedPacketViewModel : ViewModel() {
             UUID.randomUUID().toString()
         }
         val type = token.value?.token?.symbol ?: "ETH"
-        if (type == "ETH") {
+        val web3j = currentEthNetworkType.web3j
+        val result = if (type == "ETH") {
             val contract = HappyRedPacket.load(
-                    redPacketContractAddress,
+                    currentEthNetworkType.defaultContractAddress,
                     web3j,
                     credentials,
                     contractGasProvider)
@@ -86,7 +87,7 @@ class SendRedPacketViewModel : ViewModel() {
                     senderMessage,
                     senderName,
                     0.toBigInteger(),
-                    redPacketContractAddress,
+                    currentEthNetworkType.defaultContractAddress,
                     weiValue,
                     weiValue
             ).encodeFunctionCall()
@@ -94,19 +95,20 @@ class SendRedPacketViewModel : ViewModel() {
                 it.transactionCount
             }
             val rawTransaction = RawTransaction.createTransaction(nonce, defaultGasPrice, defaultGasLimit, contract.contractAddress, weiValue, data)
-            val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, ethChainID, credentials)
+            val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, currentEthNetworkType.ethChainID, credentials)
             val transaction = web3j.ethSendRawTransaction(Numeric.toHexString(signedRawTransaction)).sendAsync().await()
             if (transaction.transactionHash == null) {
                 throw TransactionException(transaction.error.message)
             }
             val redPacketData = RedPacketDataEntity().apply {
                 this.blockCreationTime = System.currentTimeMillis() / 1000
-                this.contractAddress = redPacketContractAddress
+                this.contractAddress = currentEthNetworkType.defaultContractAddress
                 this.duration = defaultRedPacketDuration
                 this.isRandom = isRandom
                 this.sendMessage = senderMessage
                 this.senderAddress = credentials.address
                 this.senderName = senderName
+                this.network = currentEthNetworkType
                 this.sendTotal = weiValue.toBigDecimal() //TODO
                 this.uuids = uuids.joinToString(";")
                 this.contractVersion = defaultContractVersion
@@ -121,26 +123,27 @@ class SendRedPacketViewModel : ViewModel() {
             withContext(Dispatchers.Main) {
                 DbContext.data.insert(redPacketData).blockingGet()
             }
-            return redPacketData
+            redPacketData
         } else {
             val tokenValue = token.value?.token ?: throw Error()
             val sendValue = amount * 10.0.pow(tokenValue.decimals).toBigDecimal()
             val erc20 = IERC20.load(tokenValue.address, web3j, credentials, contractGasProvider)
-            val data = erc20.approve(redPacketContractAddress, sendValue.toBigInteger()).encodeFunctionCall()
+            val data = erc20.approve(currentEthNetworkType.defaultContractAddress, sendValue.toBigInteger()).encodeFunctionCall()
             val nonce = web3j.ethGetTransactionCount(credentials.address, DefaultBlockParameterName.PENDING).sendAsync().await().let {
                 it.transactionCount
             }
             val rawTransaction = RawTransaction.createTransaction(nonce, defaultGasPrice, defaultGasLimit, erc20.contractAddress, data)
-            val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, ethChainID, credentials)
+            val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, currentEthNetworkType.ethChainID, credentials)
             val transaction = web3j.ethSendRawTransaction(Numeric.toHexString(signedRawTransaction)).sendAsync().await()
             if (transaction.transactionHash == null) {
                 throw TransactionException(transaction.error.message)
             }
             val redPacketData = RedPacketDataEntity().apply {
                 this.blockCreationTime = System.currentTimeMillis() / 1000
-                this.contractAddress = redPacketContractAddress
+                this.contractAddress = currentEthNetworkType.defaultContractAddress
                 this.duration = defaultRedPacketDuration
                 this.isRandom = isRandom
+                this.network = currentEthNetworkType
                 this.sendMessage = senderMessage
                 this.senderAddress = credentials.address
                 this.senderName = senderName
@@ -159,8 +162,10 @@ class SendRedPacketViewModel : ViewModel() {
             withContext(Dispatchers.Main) {
                 DbContext.data.insert(redPacketData).blockingGet()
             }
-            return redPacketData
+            redPacketData
         }
+        web3j.shutdown()
+        return result
     }
 
     override fun onCleared() {

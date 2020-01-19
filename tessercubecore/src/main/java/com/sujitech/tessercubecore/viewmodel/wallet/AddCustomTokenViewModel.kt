@@ -41,6 +41,7 @@ class AddCustomTokenViewModel : ViewModel() {
             currentTask?.cancel()
         }
         currentTask = viewModelScope.async {
+            val web3j = currentEthNetworkType.web3j
             try {
                 val detailed = ERC20Detailed.load(it.toString(), web3j, credential, getDefaultGasProvider())
                 val nameResult = detailed.name().sendAsync().await()
@@ -56,6 +57,8 @@ class AddCustomTokenViewModel : ViewModel() {
                 name.value = ""
                 decimals.value = 0
                 symbol.value = ""
+            } finally {
+                web3j.shutdown()
             }
         }
         currentTask?.start()
@@ -69,6 +72,7 @@ class AddCustomTokenViewModel : ViewModel() {
         if (DbContext.data.select(ERC20Token::class).where(ERC20Token::address eq address).get().any()) {
             return
         }
+        val web3j = currentEthNetworkType.web3j
         val wallet = DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().firstOrNull() ?: return
         val mnemonic = UserPasswordStorage.get(appContext, wallet.mnemonicId)
         val password = UserPasswordStorage.get(appContext, wallet.passwordId)
@@ -101,5 +105,6 @@ class AddCustomTokenViewModel : ViewModel() {
                 DbContext.data.update(wallet).blockingGet()
             }
         }
+        web3j.shutdown()
     }
 }

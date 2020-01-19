@@ -83,6 +83,7 @@ class App : Application(), ClipboardManager.OnPrimaryClipChangedListener {
         }
         addPresetERC20Token(R.raw.mainnet_erc20, RedPacketNetwork.Mainnet)
         addPresetERC20Token(R.raw.rinkeby_erc20, RedPacketNetwork.Rinkeby)
+        addPresetERC20Token(R.raw.ropsten_erc20, RedPacketNetwork.Ropsten)
     }
 
     private fun addPresetERC20Token(id: Int, network: RedPacketNetwork) {

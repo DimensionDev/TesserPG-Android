@@ -3,6 +3,7 @@ package com.sujitech.tessercubecore.viewmodel.wallet
 import androidx.lifecycle.ViewModel
 import com.sujitech.tessercubecore.common.collection.ObservableCollection
 import com.sujitech.tessercubecore.common.extension.format
+import com.sujitech.tessercubecore.common.wallet.currentEthNetworkType
 import com.sujitech.tessercubecore.data.*
 import io.reactivex.disposables.Disposable
 import io.requery.kotlin.eq
@@ -44,7 +45,7 @@ class TokenSelectViewModel : ViewModel() {
                 tokens.removeAt(0)
                 tokens.add(0, WalletTokenEntity().apply {
                     this.wallet = data
-                    this.tokenBalance = Convert.fromWei(data.balance, Convert.Unit.ETHER).format(4).toBigDecimal()
+                    this.tokenBalance = Convert.fromWei(data.currentBalance, Convert.Unit.ETHER).format(4).toBigDecimal()
                     this.token = ERC20TokenEntity().apply {
                         this.symbol = "ETH"
                         this.name = "ETH"
@@ -57,13 +58,13 @@ class TokenSelectViewModel : ViewModel() {
             tokens.clear()
             tokens.add(WalletTokenEntity().apply {
                 this.wallet = data
-                this.tokenBalance = Convert.fromWei(data.balance, Convert.Unit.ETHER).format(4).toBigDecimal()
+                this.tokenBalance = Convert.fromWei(data.currentBalance, Convert.Unit.ETHER).format(4).toBigDecimal()
                 this.token = ERC20TokenEntity().apply {
                     this.symbol = "ETH"
                     this.name = "ETH"
                 }
             })
-            tokens.addAll(it)
+            tokens.addAll(it.filter { it.token.network == currentEthNetworkType })
             filter(currentFilter)
         }
     }

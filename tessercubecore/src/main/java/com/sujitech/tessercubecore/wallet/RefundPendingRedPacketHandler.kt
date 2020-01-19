@@ -26,9 +26,7 @@ class RefundPendingRedPacketHandler: RedPacketHandler() {
     }
 
     override suspend fun onRevert(redPacketData: RedPacketData, revertReason: String?) {
-        if (revertReason == null) {
-            return
-        }
         redPacketData.status = RedPacketStatus.expired
+        saveResult(redPacketData)
     }
 }

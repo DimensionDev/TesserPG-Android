@@ -1,18 +1,13 @@
 package com.sujitech.tessercubecore.viewmodel.wallet
 
 import androidx.lifecycle.ViewModel
-import com.sujitech.tessercubecore.appContext
-import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.extension.await
 import com.sujitech.tessercubecore.common.extension.hexStringToByteArray
 import com.sujitech.tessercubecore.common.wallet.*
-import com.sujitech.tessercubecore.contracts.generated.ERC20Detailed
 import com.sujitech.tessercubecore.contracts.generated.HappyRedPacket
 import com.sujitech.tessercubecore.data.*
-import io.requery.kotlin.eq
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import org.web3j.crypto.Hash
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
@@ -26,7 +21,7 @@ class IncomingRedPacketViewModel : ViewModel() {
     suspend fun openRedPacket(redPacketData: RedPacketData, walletMnemonic: String, walletPassword: String): RedPacketData {
         val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
         val contractGasProvider = getDefaultGasProvider()
-        checkIsCustomToken(redPacketData)
+        val web3j = redPacketData.network.web3j
         val contract = HappyRedPacket.load(
                 redPacketData.contractAddress,
                 web3j,
@@ -52,7 +47,7 @@ class IncomingRedPacketViewModel : ViewModel() {
             it.transactionCount
         }
         val rawTransaction = RawTransaction.createTransaction(nonce, defaultGasPrice, defaultGasLimit, contract.contractAddress, data)
-        val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, ethChainID, credentials)
+        val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, redPacketData.network.ethChainID, credentials)
         val transaction = web3j.ethSendRawTransaction(Numeric.toHexString(signedRawTransaction)).sendAsync().await()
         if (transaction.transactionHash == null) {
             throw TransactionException(transaction.error.message)
@@ -65,38 +60,8 @@ class IncomingRedPacketViewModel : ViewModel() {
         withContext(Dispatchers.Main) {
             DbContext.data.update(redPacketData).blockingGet()
         }
+        web3j.shutdown()
         return redPacketData
-    }
-
-    private suspend fun checkIsCustomToken(redPacketData: RedPacketData) {
-        val data = Json.nonstrict.parse(RedPacketRawPayload.serializer(), redPacketData.rawPayload!!)
-        val erC20TokenData = data.token
-        if (erC20TokenData != null) {
-            val erC20Token = DbContext.data.select(ERC20Token::class).where(ERC20Token::address eq erC20TokenData.address).get().firstOrNull()
-            if (erC20Token == null) {
-                val wallet = DbContext.data.select(WalletData::class).get().firstOrNull()
-                if (wallet != null) {
-                    val mnemonic = UserPasswordStorage.get(appContext, wallet.mnemonicId)
-                    val password = UserPasswordStorage.get(appContext, wallet.passwordId)
-                    val credential = WalletUtils.loadBip39Credentials(password, mnemonic)
-                    val erc20 = ERC20Detailed.load(erC20TokenData.address, web3j, credential, getDefaultGasProvider())
-                    val name = erc20.name().sendAsync().await()
-                    val symbol = erc20.symbol().sendAsync().await()
-                    val decimals = erc20.decimals().sendAsync().await()
-                    val tokenEntity = ERC20TokenEntity().apply {
-                        address = erC20TokenData.address
-                        this.name = name
-                        this.symbol = symbol
-                        this.decimals = decimals.toInt()
-                        this.isUserDefine = true
-                        this.network = currentEthNetworkType
-                    }
-                    withContext(Dispatchers.Main) {
-                        redPacketData.erC20Token = DbContext.data.insert(tokenEntity).blockingGet()
-                    }
-                }
-            }
-        }
     }
 }
 

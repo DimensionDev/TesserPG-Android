@@ -21,9 +21,11 @@ android {
 
         buildConfigField("String", "GCM_IV", secretProperties['GCM_IV'])
         buildConfigField("String", "AES_KEY", secretProperties['AES_KEY'])
-        buildConfigField("String", "CONTRACT_ADDRESS", secretProperties['CONTRACT_ADDRESS'])
-        buildConfigField("String", "ETH_URL", secretProperties['ETH_URL'])
-        buildConfigField("int", "NET_TYPE", secretProperties['NET_TYPE'])
+        buildConfigField("String", "RINKEBY_CONTRACT_ADDRESS", secretProperties['RINKEBY_CONTRACT_ADDRESS'])
+        buildConfigField("String", "RINKEBY_ETH_URL", secretProperties['RINKEBY_ETH_URL'])
+        buildConfigField("String", "MAINNET_ETH_URL", secretProperties['MAINNET_ETH_URL'])
+        buildConfigField("String", "ROPSTEN_CONTRACT_ADDRESS", secretProperties['ROPSTEN_CONTRACT_ADDRESS'])
+        buildConfigField("String", "ROPSTEN_ETH_URL", secretProperties['ROPSTEN_ETH_URL'])
     }
 
     buildTypes {

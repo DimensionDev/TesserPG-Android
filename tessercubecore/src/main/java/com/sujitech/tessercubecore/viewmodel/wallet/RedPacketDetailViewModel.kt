@@ -38,6 +38,7 @@ class RedPacketDetailViewModel : ViewModel() {
         viewModelScope.launch {
             val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
             val contractGasProvider = getDefaultGasProvider()
+            val web3j = data.network.web3j
             val contract = HappyRedPacket.load(
                     data.contractAddress,
                     web3j,
@@ -59,6 +60,7 @@ class RedPacketDetailViewModel : ViewModel() {
             }.let {
                 claimers.addAll(it)
             }
+            web3j.shutdown()
         }
     }
 
@@ -71,6 +73,7 @@ class RedPacketDetailViewModel : ViewModel() {
         val walletMnemonic = UserPasswordStorage.get(appContext, wallet.mnemonicId)
         val credentials = WalletUtils.loadBip39Credentials(walletPassword, walletMnemonic)
         val contractGasProvider = getDefaultGasProvider()
+        val web3j = data.network.web3j
         val contract = HappyRedPacket.load(
                 data.contractAddress,
                 web3j,
@@ -81,7 +84,7 @@ class RedPacketDetailViewModel : ViewModel() {
             it.transactionCount
         }
         val rawTransaction = RawTransaction.createTransaction(nonce, defaultGasPrice, defaultGasLimit, contract.contractAddress, call)
-        val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, ethChainID, credentials)
+        val signedRawTransaction = TransactionEncoder.signMessage(rawTransaction, data.network.ethChainID, credentials)
         val transaction = web3j.ethSendRawTransaction(Numeric.toHexString(signedRawTransaction)).sendAsync().await()
         if (transaction.transactionHash == null) {
             throw TransactionException(transaction.error.message)
@@ -93,6 +96,7 @@ class RedPacketDetailViewModel : ViewModel() {
         withContext(Dispatchers.Main) {
             DbContext.data.update(data).blockingGet()
         }
+        web3j.shutdown()
         return data
     }
 }

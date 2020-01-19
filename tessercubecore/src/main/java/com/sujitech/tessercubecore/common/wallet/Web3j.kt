@@ -1,5 +1,6 @@
 package com.sujitech.tessercubecore.common.wallet
 
+import androidx.lifecycle.MutableLiveData
 import com.sujitech.tessercubecore.BuildConfig
 import com.sujitech.tessercubecore.common.extension.hexStringToByteArray
 import com.sujitech.tessercubecore.data.RedPacketNetwork
@@ -18,20 +19,45 @@ val defaultGasLimit = 1000000.toBigInteger()
 val defaultContractVersion = 1
 val defaultAESVersion = 1
 val defaultRedPacketDuration = 86400L
-/**
- * @see org.web3j.tx.ChainIdLong
- */
-val ethChainID = BuildConfig.NET_TYPE.toLong()
-val currentEthNetworkType = when (ethChainID) {
-    ChainIdLong.RINKEBY -> RedPacketNetwork.Rinkeby
-    ChainIdLong.MAINNET -> RedPacketNetwork.Mainnet
-    else -> TODO()
+
+var currentEthNetworkType = RedPacketNetwork.Rinkeby
+    set(value) {
+        field = value
+        currentEthNetworkLiveData.value = value
+    }
+
+val currentEthNetworkLiveData = MutableLiveData(RedPacketNetwork.Rinkeby)
+
+val RedPacketNetwork.url: String
+    get() = when (this) {
+        RedPacketNetwork.Mainnet -> BuildConfig.MAINNET_ETH_URL
+        RedPacketNetwork.Rinkeby -> BuildConfig.RINKEBY_ETH_URL
+        RedPacketNetwork.Ropsten -> BuildConfig.ROPSTEN_ETH_URL
+    }
+
+val RedPacketNetwork.web3j: Web3j
+    get() = Web3j.build(HttpService(this.url))
+
+val RedPacketNetwork.ethChainID: Long
+    get() = when (this) {
+        RedPacketNetwork.Mainnet -> ChainIdLong.MAINNET
+        RedPacketNetwork.Rinkeby -> ChainIdLong.RINKEBY
+        RedPacketNetwork.Ropsten -> ChainIdLong.ROPSTEN
+    }
+
+val RedPacketNetwork.defaultContractAddress: String
+    get() = when (this) {
+        RedPacketNetwork.Mainnet -> TODO()
+        RedPacketNetwork.Rinkeby -> BuildConfig.RINKEBY_CONTRACT_ADDRESS
+        RedPacketNetwork.Ropsten -> BuildConfig.ROPSTEN_CONTRACT_ADDRESS
+    }
+
+fun <T> Web3j.use(block: (Web3j) -> T): T {
+    val result = block.invoke(this)
+    this.shutdown()
+    return result
 }
-val redPacketContractAddress = BuildConfig.CONTRACT_ADDRESS
-val ethUrl = BuildConfig.ETH_URL
-val web3j by lazy {
-    Web3j.build(HttpService(ethUrl))
-}
+
 fun getDefaultGasProvider() = StaticGasProvider(defaultGasPrice, defaultGasLimit)
 
 fun String.sha3Hex() = Hash.sha3String(this).removePrefix("0x").hexStringToByteArray()

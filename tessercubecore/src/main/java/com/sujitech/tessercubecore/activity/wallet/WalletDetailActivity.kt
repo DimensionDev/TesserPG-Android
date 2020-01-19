@@ -16,6 +16,7 @@ import com.sujitech.tessercubecore.common.extension.shareText
 import com.sujitech.tessercubecore.common.extension.toActivity
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.data.WalletToken
+import com.sujitech.tessercubecore.data.currentBalance
 import com.sujitech.tessercubecore.data.formatToken
 import com.sujitech.tessercubecore.viewmodel.wallet.WalletDetailViewModel
 import kotlinx.android.synthetic.main.activity_wallet_detail.*
@@ -78,7 +79,7 @@ class WalletDetailActivity : BaseActivity() {
         viewModel.wallet.observe(this) {
             item_key_name.text = "Wallet ${it.address.take(6)}"
             item_key_fingerprint.text = it.address
-            item_key_type.text = it.balance?.takeIf {
+            item_key_type.text = it.currentBalance?.takeIf {
                 it > 0.toBigDecimal()
             }?.formatWei() ?: "0 ETH"
         }

@@ -3,6 +3,7 @@ package com.sujitech.tessercubecore.viewmodel.wallet
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sujitech.tessercubecore.common.collection.ObservableCollection
+import com.sujitech.tessercubecore.common.wallet.currentEthNetworkType
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.WalletData
 import com.sujitech.tessercubecore.data.WalletToken
@@ -23,11 +24,11 @@ class WalletDetailViewModel : ViewModel() {
         }
         walletSubscription = DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().observableResult().subscribe {
             wallet.value = it.first()
-            if (tokens.count() != it.first().walletToken.count()) {
+            if (tokens.count() != it.first().walletToken.count() || tokens.count() == 0) {
                 BalanceUpdater.update(DbContext.data.select(WalletData::class).where(WalletData::dataId eq data.dataId).get().first())
             }
             tokens.clear()
-            tokens.addAll(it.first().walletToken)
+            tokens.addAll(it.first().walletToken.filter { it.token.network == currentEthNetworkType })
         }
     }
 
