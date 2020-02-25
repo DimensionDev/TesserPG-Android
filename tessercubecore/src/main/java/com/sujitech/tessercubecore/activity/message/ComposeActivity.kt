@@ -17,7 +17,9 @@ import com.sujitech.tessercubecore.common.UserPasswordStorage
 import com.sujitech.tessercubecore.common.extension.*
 import com.sujitech.tessercubecore.data.*
 import kotlinx.android.synthetic.main.activity_compose.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moe.tlaster.kotlinpgp.KotlinPGP
 import moe.tlaster.kotlinpgp.data.EncryptParameter
 import moe.tlaster.kotlinpgp.data.PublicKeyData
@@ -216,18 +218,23 @@ class ComposeActivity : BaseActivity() {
                 )
             }
         } else {
-            val password = if (sendFrom.hasPassword) {
-                UserPasswordStorage.get(this@ComposeActivity, sendFrom.uuid) ?: ""
-            } else {
-                ""
+            val result = withContext(Dispatchers.Main) {
+                biometricAuthentication("Authentication Required", "Require authentication to sign your message")
             }
-            encryptData = EncryptParameter(
-                    message = message,
-                    publicKey = sendTo.map { PublicKeyData(it.pubKeyContent) },
-                    enableSignature = true,
-                    privateKey = sendFrom.priKey,
-                    password = password
-            )
+            if (result) {
+                val password = if (sendFrom.hasPassword) {
+                    UserPasswordStorage.get(this@ComposeActivity, sendFrom.uuid) ?: ""
+                } else {
+                    ""
+                }
+                encryptData = EncryptParameter(
+                        message = message,
+                        publicKey = sendTo.map { PublicKeyData(it.pubKeyContent) },
+                        enableSignature = true,
+                        privateKey = sendFrom.priKey,
+                        password = password
+                )
+            }
         }
         return encryptData
     }

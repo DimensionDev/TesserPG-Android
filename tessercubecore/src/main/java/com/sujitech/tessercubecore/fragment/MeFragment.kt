@@ -25,6 +25,7 @@ import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.UserKeyData
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_me.*
+import kotlinx.coroutines.launch
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import uk.co.samuelwall.materialtaptargetprompt.extras.backgrounds.RectanglePromptBackground
 import uk.co.samuelwall.materialtaptargetprompt.extras.focals.RectanglePromptFocal
@@ -115,7 +116,7 @@ class MeFragment : ViewPagerFragment() {
                                     true
                                 }
                                 R.id.menu_export_private_key -> {
-                                    context.shareText(args.item.priKey)
+                                    shareKey(args.item.priKey)
                                     true
                                 }
                                 R.id.menu_revoke -> {
@@ -136,6 +137,21 @@ class MeFragment : ViewPagerFragment() {
         userKeySubscription = DbContext.data.select(UserKeyData::class).get().observableResult().subscribe {
             val result = it.toList()
             updateUserKeyData(result)
+        }
+    }
+
+    private fun shareKey(priKey: String) {
+        activity?.let { fragmentActivity ->
+            context?.asyncScope?.launch {
+                val bioResult = fragmentActivity.biometricAuthentication(
+                        "Authentication Required",
+                        "Require authentication to share your private key",
+                        confirmRequired = true
+                )
+                if (bioResult) {
+                    context?.shareText(priKey)
+                }
+            }
         }
     }
 

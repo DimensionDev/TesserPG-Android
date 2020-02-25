@@ -13,15 +13,14 @@ import com.sujitech.tessercubecore.activity.BaseActivity
 import com.sujitech.tessercubecore.activity.IndexActivity
 import com.sujitech.tessercubecore.common.MessageDataUtils
 import com.sujitech.tessercubecore.common.PrivateKeyNotFoundError
-import com.sujitech.tessercubecore.common.extension.getClipboardText
-import com.sujitech.tessercubecore.common.extension.task
-import com.sujitech.tessercubecore.common.extension.toActivity
-import com.sujitech.tessercubecore.common.extension.toast
+import com.sujitech.tessercubecore.common.extension.*
 import com.sujitech.tessercubecore.data.DbContext
 import com.sujitech.tessercubecore.data.MessageData
 import com.sujitech.tessercubecore.widget.MessageCard
 import io.requery.kotlin.eq
 import kotlinx.android.synthetic.main.activity_interpret.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import moe.tlaster.kotlinpgp.isPGPMessage
 
 class InterpretActivity : BaseActivity() {
@@ -101,18 +100,26 @@ class InterpretActivity : BaseActivity() {
             return
         }
         task {
-            try {
-                val messageData = MessageDataUtils.getMessageDataFromEncryptedContent(this@InterpretActivity, pgpContent)
-                if (messageData != null) {
-                    runOnUiThread {
-                        DbContext.data.insert(messageData).blockingGet()
-                        callback?.invoke(messageData)
-                        finish()
+            val bioResult = withContext(Dispatchers.Main) {
+                biometricAuthentication(
+                        "Authentication Required",
+                        "Require authentication to interpret your message"
+                )
+            }
+            if (bioResult) {
+                try {
+                    val messageData = MessageDataUtils.getMessageDataFromEncryptedContent(this@InterpretActivity, pgpContent)
+                    if (messageData != null) {
+                        runOnUiThread {
+                            DbContext.data.insert(messageData).blockingGet()
+                            callback?.invoke(messageData)
+                            finish()
+                        }
                     }
-                }
-            } catch (e: PrivateKeyNotFoundError) {
-                runOnUiThread {
-                    toast(getString(R.string.error_interpret_private_key_mismatch))
+                } catch (e: PrivateKeyNotFoundError) {
+                    runOnUiThread {
+                        toast(getString(R.string.error_interpret_private_key_mismatch))
+                    }
                 }
             }
         }
