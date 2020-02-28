@@ -67,12 +67,19 @@ class InterpretActivity : BaseActivity() {
         if (content.isNullOrEmpty()) {
             toast(getString(R.string.error_import_empty))
             finish()
-        } else if (!content.isPGPMessage) {
-            toast(getString(R.string.error_pgp_message_format))
-            finish()
         } else {
-            interpret_content.setText(content)
-            interpret(allowDuplicate, callback)
+            val trimContent = content
+                    .replaceBefore("-----BEGIN PGP MESSAGE-----", "")
+                    .replaceAfter("-----END PGP MESSAGE-----", "")
+                    .replaceBefore("-----BEGIN PGP SIGNED MESSAGE-----", "")
+                    .replaceAfter("-----END PGP SIGNATURE-----", "")
+            if (!trimContent.isPGPMessage) {
+                toast(getString(R.string.error_pgp_message_format))
+                finish()
+            } else {
+                interpret_content.setText(trimContent)
+                interpret(allowDuplicate, callback)
+            }
         }
     }
 
