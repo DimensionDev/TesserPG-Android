@@ -104,7 +104,7 @@
     <string name="edit_contact">Edit Contact</string>
     <string name="contact_detail">Contact Detail</string>
     <string name="paste_private_key_title">Paste Private Key</string>
-    <string name="add_to_contact">Add add to contact</string>
+    <string name="add_to_contact">Add to contact</string>
     <string name="add_private_key">Add private key</string>
     <string name="error_import_empty">Nothing to import!</string>
     <string name="error_private_key_format">Private key format error!</string>
