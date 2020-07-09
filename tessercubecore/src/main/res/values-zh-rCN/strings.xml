@@ -66,7 +66,7 @@
     <string name="empty_contact">你还没有联系人，通过添加他们的公钥来添加联系人</string>
     <string name="select_recipients">选择接收者</string>
     <string name="message_signed_by">签名者：</string>
-    <string name="message_recipeints">接收者：</string>
+    <string name="message_recipients">接收者：</string>
     <string name="encrypt">加密</string>
     <string name="contacts">联系人</string>
     <string name="me">我</string>

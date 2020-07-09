@@ -67,7 +67,7 @@
 	<string name="empty_contact">아직 연락처가 없습니다. \n자신의 공개 키를 가져 와서 연락처를 추가하십시오.</string>
 	<string name="select_recipients">받는 사람 선택</string>
 	<string name="message_signed_by">서명:</string>
-	<string name="message_recipeints">수신자 :</string>
+	<string name="message_recipients">수신자 :</string>
 	<string name="encrypt">암호화</string>
 	<string name="contacts">연락처</string>
 	<string name="me">나</string>
