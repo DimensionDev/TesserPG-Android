@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content" />
                 <TextView
                     android:id="@+id/widget_message_to_title"
-                    android:text="@string/message_recipeints"
+                    android:text="@string/message_recipients"
                     app:layout_constraintTop_toBottomOf="@id/widget_message_from_title"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_width="wrap_content"
